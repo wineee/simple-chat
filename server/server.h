@@ -18,7 +18,6 @@ using namespace std;
 
 class Server {
   friend class ChatInfo;
-  //friend class ChatDataBase;
  private:
   struct event_base *base; // 事件集合
   struct evconnlistener *listener; // 监听事件

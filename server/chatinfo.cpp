@@ -90,7 +90,9 @@ string ChatInfo::info_get_group_member(string group_name) {
       for (auto i = it->l->begin(); i != it->l->end(); i++) {
 	member_list += i->name + "|";
       }
+      return member_list;
     }
   }
+  return "";
 }
 

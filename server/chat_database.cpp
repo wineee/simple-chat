@@ -126,10 +126,7 @@ bool ChatDataBase::my_database_is_friend(string name1, string name2) {
     return false;
   }
   string all_friend = row[0];
-  all_friend find name2
-    ;; todo
-    //
-    return 0;
+  return all_friend.find("|"+name2+"|") != string::npos;
 }
 
 void ChatDataBase::my_database_add_new_friend(string name, string fri) {
