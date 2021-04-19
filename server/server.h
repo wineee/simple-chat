@@ -23,9 +23,9 @@ class Server {
   struct evconnlistener *listener; // 监听事件
   static ChatInfo *chatlist;
   static ChatDataBase *chatdb;
-private:
+ private:
   static void listener_cb(struct evconnlistener *listener, evutil_socket_t fd, struct sockaddr *addr, int socklen, void *arg);
-  static void client_handler(int fd);
+  static void client_handler(evutil_socket_t fd);
   static void read_cb(struct bufferevent *bev, void *ctx);
   static void event_cb(struct bufferevent *bev, short what, void *ctx);
   static void server_register(struct bufferevent *bev, Json::Value val);

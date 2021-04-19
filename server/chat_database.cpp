@@ -5,13 +5,13 @@ ChatDataBase::ChatDataBase() {
 }
 
 ChatDataBase::~ChatDataBase() {
-  mysql_close(mysql);
+  
 }
 
 void ChatDataBase::my_database_connect(const char* name) {
   mysql = mysql_init(nullptr);
   mysql = mysql_real_connect(mysql, "localhost", "root", "passwd", name, 0, nullptr, 0);
-  if (nullptr == mysql) {
+  if (mysql == nullptr) {
     cout << "connect database failure" << endl;
     return;
   }
@@ -60,18 +60,17 @@ void ChatDataBase::my_database_get_group_member(string name, string &s) {
     return;
   }
   s += row[0];
-} 
-
+}
 
 bool ChatDataBase::my_database_user_exist(string name) {
-
-   string sql = "show tables like " + name;
+   string sql = "show tables like '" + name + "'";
    if (mysql_query(mysql, sql.c_str())) {
-     cout << "mysql query erreor" << endl;
+     cout << "mysql query error" << endl;
+     return false;
    }
    MYSQL_RES *res = mysql_store_result(mysql);
    MYSQL_ROW row = mysql_fetch_row(res);
-   if (nullptr == row) {
+   if (row == nullptr) {
      return false;
    } else {
      return true;
@@ -79,12 +78,12 @@ bool ChatDataBase::my_database_user_exist(string name) {
 }
 
 void ChatDataBase::my_database_user_passwd(string name, string passwd) {
-  string sql = "create table " + name + " (password varchar(16), friend varchar(4096), chatgroup(4096))";
+  string sql = "create table " + name + " (passwd varchar(16), friend varchar(4096), chatgroup varchar(4096))";
   if (mysql_query(mysql, sql.c_str()) != 0) {
-   
+     cout << "create table error!" << endl;
   }
 
-  sql = "insert into " + name + " (passwd) values (" + passwd + ")";
+  sql = "insert into " + name + " (passwd) values ('" + passwd + "')";
   if (mysql_query(mysql, sql.c_str()) != 0) {
      cout << "set passwd error!" << endl;
   }

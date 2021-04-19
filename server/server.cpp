@@ -4,8 +4,6 @@ ChatDataBase *Server::chatdb = new ChatDataBase;
 ChatInfo *Server::chatlist = new ChatInfo;
 
 Server::Server(const char *ip, int port) {
-  chatlist = new ChatInfo;
-  chatdb = new ChatDataBase;
   base = event_base_new();
 
   struct sockaddr_in server_addr;
@@ -36,7 +34,7 @@ void Server::listener_cb(struct evconnlistener *listener, evutil_socket_t fd, st
   client_thread.detach();  // 线程分离
 }
 
-void Server::client_handler(int fd) {
+void Server::client_handler(evutil_socket_t fd) {
   // 创建集合
   struct event_base *base = event_base_new();
   struct bufferevent *bev = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE);
@@ -63,15 +61,13 @@ void Server::read_cb(struct bufferevent *bev, void *ctx) {
   cout << buf << endl;
 
   Json::CharReaderBuilder rbuilder;
-  Json::StreamWriterBuilder wbuilder;
   Json::Value val;
-  // tiao guo
   string err;
-  istringstream iss(buf);
-  if (!Json::parseFromStream(rbuilder, iss, &val, &err)) {
-    cout << "Json parse Error!" << endl;
+  std::unique_ptr<Json::CharReader> const reader(rbuilder.newCharReader());
+  if(reader->parse(buf, buf+strlen(buf), &val, &err) == false) {
+    cout << "Json parse Error: " << err << endl;
   }
-
+  
   string cmd = val["cmd"].asString();
   if (cmd == "register") {
     server_register(bev, val);
@@ -163,7 +159,7 @@ void Server::server_login(struct bufferevent *bev, Json::Value val) {
 
   else {
     // 在线用户链表
-    User u = {val["user"].asString(), bev};
+    /*    User u = {val["user"].asString(), bev};
     chatlist->online_user->push_back(u);
     
     string fri = chatdb->my_database_get_friend(val["user"].asString());
@@ -180,7 +176,7 @@ void Server::server_login(struct bufferevent *bev, Json::Value val) {
     }
 
     // 向好友发送上线通知
-    ;; todo
+    ;; todo*/
   }
 
   chatdb->my_database_disconnect();
@@ -202,16 +198,16 @@ void Server::server_add_friend(struct bufferevent *bev, Json::Value val) {
   }
   // 已经是好友了
   else if (chatdb->my_database_is_friend(val["user"].asString(), val["friend"].asString())) {
-    ;; todo
+    //    ;; todo
   }
   
   else {
     chatdb->my_database_add_new_friend(val["user"].asString(), val["friend"].asString());
     chatdb->my_database_add_new_friend(val["friend"].asString(), val["user"].asString());
     // 回复客户端添加成功
-    ;; 
+    //    ;; 
     // 回复对方多了个好友
-    ;; todo
+    //;; todo
   }
   chatdb->my_database_disconnect();
 }
@@ -229,15 +225,15 @@ void Server::event_cb(struct bufferevent *bev, short what, void *ctx) {
 
 void Server::server_create_group(struct bufferevent *bev, Json::Value val) {
   chatdb->my_database_connect("chatgroup");
-  if (chatdb->my_database_group_exist(val["group"])) {
+  if (chatdb->my_database_group_exist(val["group"].asString())) {
 
-    ;;todo
+    // ;;todo
   }
   else {
 
     chatdb->my_database_add_new_group(val["group"].asString(), val["user"].asString());
 
-    ;; todo return 
+    // ;; todo return 
   }
   chatdb->my_database_disconnect();
 }
@@ -251,14 +247,15 @@ void Server::server_create_group(struct bufferevent *bev, Json::Value val) {
 
 
 void Server::server_add_group(struct bufferevent *bev, Json::Value val) {
+  /*
   // 判断群是否存在
   if (!chatlist->info_group_exist(val["group"].asString())) {
-    ;; todo
+    //;; todo
     return;
   }
   // 判断用户是否在群里
   if (chatlist->info_user_in_group(val["group"].asString(), val["user"].asString())) {
-    ;; todo
+    // ;; todo
     return;
   }
   // 修改数据库（用户表 群表）
@@ -272,7 +269,8 @@ void Server::server_add_group(struct bufferevent *bev, Json::Value val) {
   // 修改链表
   chatlist->info_group_add_user(val["group"].asString(), val["user"].asString());
 
-  ;; todo
+  // ;; todo
+  */
 }
 
 
@@ -286,13 +284,13 @@ void Server::server_private_chat(struct bufferevent *bev, Json::Value val) {
   struct bufferevent *to_bev = chatlist->info_get_friend_bev(val["user_to"].asString());
   if (to_bev == nullptr) {
     // 不在线
-    ;;todo
+    // ;;todo
   }
 
   // 转发
-  ;; todo val->to_bev
+  // ;; todo val->to_bev
 
-       ;; todo return 
+  //     ;; todo return 
 }
 
 
@@ -301,17 +299,19 @@ void Server::server_private_chat(struct bufferevent *bev, Json::Value val) {
 // 服务器转发：{"cmd":"group_chat_reply", "user":"", "group":"", "text":""}
 // 服务器回复:{"cmd":"group_chat_reply", "result":"success"}
 void Server::server_group_chat(struct bufferevent *bev, Json::Value val) {
+  /*
   for (auto it = chatlist->group_info->begin(); it != chatlist->group_info->end(); it++) {
     if (val["group"].asString() == it->name) {
       for (auto u = it->l->begin(); u != it->l->end(); u++) {
 	struct bufferevent *to_bev = chatlist->info_get_friend_bev(i->name);
 	if (bev != nullptr) {
-	  ;; todo 转发
+	  //	  ;; todo 转发
 	}
       }
     }
   }
-  ;; todo 回复成功
+  //;; todo 回复成功
+*/
 }
 
 // 获取群成员
@@ -320,7 +320,7 @@ void Server::server_group_chat(struct bufferevent *bev, Json::Value val) {
 
 void Server::server_get_group_member(struct bufferevent *bev, Json::Value val) {
   string member = chatlist->info_get_group_member(val["group"].asString());
-  ;; todo
+  // ;; todo
 }
 
 
@@ -329,6 +329,7 @@ void Server::server_get_group_member(struct bufferevent *bev, Json::Value val) {
 // 向好友返回 {"cmd":"friend_offline", "result":"name"}
 void Server::server_user_offline(struct bufferevent *bev, Json::Value val) {
   // 从链表中删除用户
+  /*
   for (auto it = chatlist->online_user->begin(); it != online_user->end(); it++) {
     if (it->name == val["user"].asString()) {
       chatlist->online_user->erase(it);
@@ -338,7 +339,8 @@ void Server::server_user_offline(struct bufferevent *bev, Json::Value val) {
   
   // 获取好友列表并返回
   //todo
-  // 
+  /
+*/ 
 }
 
 
@@ -351,13 +353,13 @@ void Server::server_user_offline(struct bufferevent *bev, Json::Value val) {
 void Server::server_send_file(struct bufferevent *bev, Json::Value val) {
   struct bufferevent *todev = chatlist->info_get_friend_bev(val["to_user"].asString());
   if (todev == nullptr) {
-    ;; todo
+    //    ;; todo
   }
   // 启动新线程，创建文件服务器
   int port = 8080, from_fd = 0, to_fd = 0;
-  thread send_file_thread(send_file_hander, val["length"].asString(), port, &from_fd, &to_fd);
+  thread send_file_thread(send_file_hander, val["length"].asInt(), port, &from_fd, &to_fd);
   send_file_thread.detach();
-
+  /*
   ;; todo 返回 port-》 bev
   int count = 0;
   while(from_fd <= 0) {
@@ -367,21 +369,22 @@ void Server::server_send_file(struct bufferevent *bev, Json::Value val) {
       pthread_cancel(send_file_thread.native_handle()); // 取消线程
       ;; todo cha shi;
       return;
-    }
-  }
+      }
+      }*/
 
 // 返回端口号给接收客户端
-;; todo;
-   count = 0;
+//;; todo;
+/*
+  int count = 0;
   while(to_fd <= 0) {
     count++;
     usleep(100000);
     if (count == 100) {
       pthread_cancel(send_file_thread.native_handle()); // 取消线程
-      ;; todo cha shi;
+      // ;; todo cha shi;
       return;
     }
-  }
+    }*/
 }
 
 void Server::send_file_hander(int length, int port, int *f_fd, int *t_fd) {
@@ -394,7 +397,7 @@ void Server::send_file_hander(int length, int port, int *f_fd, int *t_fd) {
   memset(&server_addr, 0, sizeof(server_addr));
   server_addr.sin_family = AF_INET;
   server_addr.sin_port = htons(port);
-  server_addr.sin_addr.s_addr = inet_addr(IP);
+  server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
   bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
 
   int len = sizeof(client_addr);
