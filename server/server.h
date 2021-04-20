@@ -12,12 +12,11 @@
 #include <json/json.h>
 #include <unistd.h>
 
-#include "chatinfo.h"
+#include "chatlist.h"
 
 using namespace std;
 
 class Server {
-  friend class ChatInfo;
  private:
   struct event_base *base; // 事件集合
   struct evconnlistener *listener; // 监听事件
@@ -37,7 +36,7 @@ class Server {
   static void server_get_group_member(struct bufferevent *bev, Json::Value val);
   static void server_user_offline(struct bufferevent *bev, Json::Value val);
   static void server_send_file(struct bufferevent *bev, Json::Value val);
-  static void send_file_hander(int length, int port, int *from_fd, int *to_fd);
+  static void send_file_hander(size_t length, int port, int *from_fd, int *to_fd);
  public:
   Server(const char *ip = "120.0.0.1", int port = 8000);
   ~Server();

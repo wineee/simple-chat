@@ -94,7 +94,7 @@ void Server::read_cb(struct bufferevent *bev, void *ctx) {
 
 // 注册
 /**
-   客户端发送： {“cmd”:"register", "user":"LiHua", "password":"11111"}
+   客户端发送： {“cmd”:"register", "user":"LiHua", "passwd":"11111"}
    成功返回： {“cmd”:"register_reply", "result":"success"};
    失败返回： {"cmd":"register_reply", "result":"failure"};
 */
@@ -110,7 +110,7 @@ void Server::server_register(struct bufferevent *bev, Json::Value val) {
       cout << "bufferevent write error" << endl;
     }
   } else {
-    chatdb->my_database_user_passwd(val["user"].asString(), val["passwd"].asString());
+    chatdb->my_database_create_user_passwd(val["user"].asString(), val["passwd"].asString());
     Json::Value returnVal;
     Json::StreamWriterBuilder wbuilder;
     returnVal["cmd"] = "register_reply";
@@ -125,7 +125,7 @@ void Server::server_register(struct bufferevent *bev, Json::Value val) {
 
 // 登陆
 /**
-   客户端发送： {“cmd”:"login", "user":"LiHua", "password":"11111"}
+   客户端发送： {“cmd”:"login", "user":"LiHua", "passwd":"11111"}
    失败返回： {"cmd":"login_reply", "result":"user_not_exist"};
    失败返回： {"cmd":"login_reply", "result":"passwd_error"};
    成功返回： {“cmd”:"login_reply", "result":"好友列表"" "group":"群列表"};
@@ -134,11 +134,11 @@ void Server::server_register(struct bufferevent *bev, Json::Value val) {
 void Server::server_login(struct bufferevent *bev, Json::Value val) {
   chatdb->my_database_connect("user");
   // 用户不存在
+  Json::Value returnVal;
+  Json::StreamWriterBuilder wbuilder;
   if (!chatdb->my_database_user_exist(val["user"].asString())) {
-    Json::Value returnVal;
     returnVal["cmd"] = "login_reply";
     returnVal["result"] = "user_not_exist";
-    Json::StreamWriterBuilder wbuilder;
     string b = Json::writeString(wbuilder, returnVal);
     if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
       cout << "bufferevent write error" << endl;
@@ -147,36 +147,32 @@ void Server::server_login(struct bufferevent *bev, Json::Value val) {
 
   // 密码不正确
   else if (!chatdb->my_database_passwd_correct(val["user"].asString(), val["passwd"].asString())) {
-     Json::Value returnVal;
     returnVal["cmd"] = "login_reply";
     returnVal["result"] = "passwd_error";
-    Json::StreamWriterBuilder wbuilder;
     string b = Json::writeString(wbuilder, returnVal);
     if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
       cout << "bufferevent write error" << endl;
     }
   }
 
+  // 登陆成功
   else {
     // 在线用户链表
-    /*    User u = {val["user"].asString(), bev};
+    User u = {val["user"].asString(), bev};
     chatlist->online_user->push_back(u);
-    
-    string fri = chatdb->my_database_get_friend(val["user"].asString());
+    string fri_list = chatdb->my_database_get_friend(val["user"].asString());
     string group_list = chatdb->my_database_get_group(val["user"].asString());
-    
-    Json::Value returnVal;
     returnVal["cmd"] = "login_reply";
-    returnVal["result"] = fri.c_str() + g;
-    ;; todo
-    Json::StreamWriterBuilder wbuilder;
+    returnVal["result"] = fri_list;
+    returnVal["group"] = group_list;
     string b = Json::writeString(wbuilder, returnVal);
     if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
       cout << "bufferevent write error" << endl;
     }
 
     // 向好友发送上线通知
-    ;; todo*/
+    //;; todo*/
+    //cout << " ok " << endl;
   }
 
   chatdb->my_database_disconnect();
@@ -387,7 +383,7 @@ void Server::server_send_file(struct bufferevent *bev, Json::Value val) {
     }*/
 }
 
-void Server::send_file_hander(int length, int port, int *f_fd, int *t_fd) {
+void Server::send_file_hander(size_t length, int port, int *f_fd, int *t_fd) {
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd == -1) {
     return;

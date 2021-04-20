@@ -24,6 +24,7 @@ struct Group {
 };
 
 class ChatInfo {
+  friend class Server;
  private:
   list<User> *online_user;
   list<Group> *group_info;

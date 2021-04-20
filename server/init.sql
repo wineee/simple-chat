@@ -15,3 +15,6 @@ insert into 交流群2 values("李白", "杜甫|白居易");
 create table LiMin (passwd varchar(16), friend varchar(4096), chatgroup varchar(4096));
 insert into LiMin (passwd) values ('11111');
 
+-- 查询加入的群表
+select chatgroup from `LiMin`
+

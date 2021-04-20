@@ -21,9 +21,6 @@ void ChatDataBase::my_database_connect(const char* name) {
 }
 
 int ChatDataBase::my_database_get_group_name(string *s) {
-  if (mysql_query(mysql, "set names utf8;") != 0) {
-    cout << "set utf8 error!" << endl;
-  }
   if (mysql_query(mysql, "show tables;") != 0) {
     cout << "mysql query error!" << endl;
   }
@@ -77,7 +74,7 @@ bool ChatDataBase::my_database_user_exist(string name) {
    }
 }
 
-void ChatDataBase::my_database_user_passwd(string name, string passwd) {
+void ChatDataBase::my_database_create_user_passwd(string name, string passwd) {
   string sql = "create table " + name + " (passwd varchar(16), friend varchar(4096), chatgroup varchar(4096))";
   if (mysql_query(mysql, sql.c_str()) != 0) {
      cout << "create table error!" << endl;
@@ -93,6 +90,7 @@ bool ChatDataBase::my_database_passwd_correct(string name, string passwd) {
   string sql = "select passwd from " + name;
   if (mysql_query(mysql, sql.c_str()) != 0) {
     cout << "mysql query error!" << endl;
+    return false;
   }
 
   MYSQL_RES *res = mysql_store_result(mysql);
@@ -103,12 +101,28 @@ bool ChatDataBase::my_database_passwd_correct(string name, string passwd) {
 string ChatDataBase::my_database_get_friend(string name) {
   string sql = "select friend from " + name;
   if (mysql_query(mysql, sql.c_str()) != 0) {
-    cout << "mysql query error!" << endl;
+    cout << "mysql query error in my_database_get_friend" << endl;
+    return "";
   }
 
   MYSQL_RES *res = mysql_store_result(mysql);
   MYSQL_ROW row = mysql_fetch_row(res);
-  if (nullptr == row[0]) {
+  if (row[0] == nullptr) {
+    return "";
+  }
+  return string("").append(row[0]);
+}
+
+string ChatDataBase::my_database_get_group(string user_name) {
+  string sql = "select chatgroup from " + user_name;
+  if (mysql_query(mysql, sql.c_str()) != 0) {
+    cout << "mysql query error in my_database_get_group!" << endl;
+    return "";
+  }
+
+  MYSQL_RES *res = mysql_store_result(mysql);
+  MYSQL_ROW row = mysql_fetch_row(res);
+  if (row[0] == nullptr) {
     return "";
   }
   return string("").append(row[0]);

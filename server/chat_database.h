@@ -20,9 +20,10 @@ class ChatDataBase {
   void my_database_get_group_member(string name, string &s);
   void my_database_disconnect();
   bool my_database_user_exist(string name);
-  void my_database_user_passwd(string name, string passwd);
+  void my_database_create_user_passwd(string name, string passwd);
   bool my_database_passwd_correct(string name, string passwd);
   string my_database_get_friend(string name);
+  string my_database_get_group(string user_name);
   bool my_database_is_friend(string name1, string name2);
   void my_database_add_new_friend(string, string);
   bool my_database_group_exist(string group_name);
