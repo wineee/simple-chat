@@ -178,15 +178,23 @@ void Server::server_login(struct bufferevent *bev, Json::Value val) {
   chatdb->my_database_disconnect();
 }
 
+// 添加好友
+/*
+客户端发送：{"cmd":"add", "user":"LiHua", "friend":"Wu"}
+好友不存在：{"cmd":"add_reply", "result":"user_not_exist"}
+重复添加：{"cmd":"add_reply", "result":"already_friend"}
+成功，回复自己：{"cmd":"add_reply", "result":"success"}
+成功，回复好友：{"cmd":"add_reply", "result":"LiHua"}
+*/
+
 void Server::server_add_friend(struct bufferevent *bev, Json::Value val) {
   chatdb->my_database_connect("user");
-  
-  if (!chatdb->my_database_user_exist(val["friend"].asString())) {
-    // not exist
-    Json::Value returnVal;
+  Json::Value returnVal;
+  Json::StreamWriterBuilder wbuilder;
+  // 好友不存在
+  if (!chatdb->my_database_user_exist(val["friend"].asString())) {  
     returnVal["cmd"] = "add_reply";
     returnVal["result"] = "user_not_exist";
-    Json::StreamWriterBuilder wbuilder;
     string b = Json::writeString(wbuilder, returnVal);
     if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
       cout << "bufferevent write error" << endl;
@@ -194,16 +202,38 @@ void Server::server_add_friend(struct bufferevent *bev, Json::Value val) {
   }
   // 已经是好友了
   else if (chatdb->my_database_is_friend(val["user"].asString(), val["friend"].asString())) {
-    //    ;; todo
+    returnVal["cmd"] = "add_reply";
+    returnVal["result"] = "already_friend";
+    string b = Json::writeString(wbuilder, returnVal);
+    if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+      cout << "bufferevent write error" << endl;
+    }
   }
-  
+  // 添加成功
   else {
     chatdb->my_database_add_new_friend(val["user"].asString(), val["friend"].asString());
     chatdb->my_database_add_new_friend(val["friend"].asString(), val["user"].asString());
     // 回复客户端添加成功
-    //    ;; 
+    returnVal["cmd"] = "add_reply";
+    returnVal["result"] = "success";
+    string b = Json::writeString(wbuilder, returnVal);
+    if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+      cout << "bufferevent write error" << endl;
+    }
     // 回复对方多了个好友
-    //;; todo
+    struct bufferevent *to_bev = chatlist->info_get_friend_bev(val["friend"].asString());
+    if (to_bev == nullptr) {
+      cout << "对方不在线！未通知！" << endl;
+    }
+    else {
+      returnVal.clear();
+      returnVal["cmd"] = "add_reply";
+      returnVal["result"] = val["user"];
+      b = Json::writeString(wbuilder, returnVal);
+      if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
+	cout << "bufferevent write error" << endl;
+      }
+    }
   }
   chatdb->my_database_disconnect();
 }

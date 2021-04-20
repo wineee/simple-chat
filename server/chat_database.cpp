@@ -131,7 +131,7 @@ string ChatDataBase::my_database_get_group(string user_name) {
 bool ChatDataBase::my_database_is_friend(string name1, string name2) {
   string sql = "select friend from " + name1;
   if (mysql_query(mysql, sql.c_str()) != 0) {
-    cout << "mysql query error!" << endl;
+    cout << "mysql query error in my_database_is_friend!" << endl;
   }
   MYSQL_RES *res = mysql_store_result(mysql);
   MYSQL_ROW row = mysql_fetch_row(res);
@@ -145,21 +145,21 @@ bool ChatDataBase::my_database_is_friend(string name1, string name2) {
 void ChatDataBase::my_database_add_new_friend(string name, string fri) {
   string sql = "select friend from " + name;
   if (mysql_query(mysql, sql.c_str()) != 0) {
-    cout << "mysql query error!" << endl;
+    cout << "mysql query error in my_database_add_new_friend(query)" << endl;
   }
   string friend_list;
   MYSQL_RES *res = mysql_store_result(mysql);
   MYSQL_ROW row = mysql_fetch_row(res);
   if (row[0] == nullptr) {
-    friend_list.append(fri);
+    friend_list = "|"+fri+"|";
   } else {
     friend_list.append(row[0]);
-    friend_list += "|" + fri;
+    friend_list.append(fri+"|");
   }
   
-  sql = "update " + name + " set friend = " + friend_list;
+  sql = "update " + name + " set friend = '" + friend_list + "'";
   if (mysql_query(mysql, sql.c_str()) != 0) {
-    cout << "mysql query error!" << endl;
+    cout << "mysql query error in my_database_add_new_friend(update)" << endl;
   }
   
 }
