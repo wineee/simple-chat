@@ -1,5 +1,6 @@
 from socket import *
 import json
+from threading import Thread
 
 IP = "127.0.0.1"
 SERVER_PORT = 8000
@@ -11,11 +12,12 @@ dataSocket = socket(AF_INET, SOCK_STREAM)
 # 连接服务端socket
 dataSocket.connect((IP, SERVER_PORT))
 
-print("R 注册| L 登陆| A 加好友| G 建群| E 退出")
+print("R 注册| L 登陆| A 加好友| G 建群| C 私聊| E 退出")
 
 while True:
     # 从终端读入用户输入的字符串
     toSend = input(">>>").strip()
+    data = ""
     if toSend == "E":
         break
     if toSend == "R":
@@ -34,10 +36,16 @@ while True:
         name = input("name:")
         group = input("group:")
         data = {"cmd": "create_group", "user": name, "group": group}
+    if toSend == "C":
+        name_from = input("user_from:")
+        name_to = input("user_to:")
+        text = input("text")
+        data = {"cmd": "private_chat", "user_from": name_from, "user_to": name_to, "text": text}
 
-    jdata = json.dumps(data)
-    # 发送消息，也要编码为 bytes
-    dataSocket.send(jdata.encode())
+    if data != "":
+        jdata = json.dumps(data)
+        # 发送消息，也要编码为 bytes
+        dataSocket.send(jdata.encode())
     # 等待接收服务端的消息
     recved = dataSocket.recv(BUFLEN)
     # 如果返回空bytes，表示对方关闭了连接
@@ -47,3 +55,4 @@ while True:
     print(recved.decode())
 
 dataSocket.close()
+

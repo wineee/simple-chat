@@ -276,59 +276,85 @@ void Server::server_create_group(struct bufferevent *bev, Json::Value val) {
 
 
 ////////////////// 添加群
-// 客户端发送： {"cmd":"add_group", "user":"Li", "group":""}
-// 群不存在：  {"cmd":"add_group_reply", "result":"group_not_exit"};
-// 已经在群中： {"cmd":"add_group_reply", "result":"user_in_group"}
-// 添加成功: {"cmd":"add_group_reply", "result":"success"}
-
+/*
+   客户端发送：{"cmd":"add_group", "user":"Li", "group":""}
+   群不存在：{"cmd":"add_group_reply", "result":"group_not_exit"};
+   已经在群中：{"cmd":"add_group_reply", "result":"user_in_group"}
+   添加成功:{"cmd":"add_group_reply", "result":"success"}
+*/
 
 void Server::server_add_group(struct bufferevent *bev, Json::Value val) {
-  /*
+  Json::Value returnVal;
+  Json::StreamWriterBuilder wbuilder;
+  returnVal["cmd"] = "add_group_reply";
   // 判断群是否存在
   if (!chatlist->info_group_exist(val["group"].asString())) {
-    //;; todo
-    return;
+    returnVal["result"] = "group_not_exit";
   }
   // 判断用户是否在群里
-  if (chatlist->info_user_in_group(val["group"].asString(), val["user"].asString())) {
-    // ;; todo
-    return;
+  else if (chatlist->info_user_in_group(val["group"].asString(), val["user"].asString())) {
+    returnVal["result"] = "user_in_group";
   }
-  // 修改数据库（用户表 群表）
-  chatdb->my_database_connect("user");
-  chatdb->my_database_user_add_group(val["group"].asString(), val["user"].asString());
-  chatdb->my_database_disconnect();
+  // 添加成功
+  else {
+    // 修改数据库（用户表 群表）
+    chatdb->my_database_connect("user");
+    chatdb->my_database_user_add_group(val["group"].asString(), val["user"].asString());
+    chatdb->my_database_disconnect();
 
-  chatdb->my_database_connect("group");
-  chatdb->my_database_group_add_user(val["user"].asString(), val["group"].asString());
-  chatdb->my_database_disconnect();
-  // 修改链表
-  chatlist->info_group_add_user(val["group"].asString(), val["user"].asString());
-
-  // ;; todo
-  */
+    chatdb->my_database_connect("group");
+    chatdb->my_database_group_add_user(val["user"].asString(), val["group"].asString());
+    chatdb->my_database_disconnect();
+    // 修改链表
+    chatlist->info_group_add_user(val["group"].asString(), val["user"].asString());
+    returnVal["result"] = "success";
+  }
+  string b = Json::writeString(wbuilder, returnVal);
+  if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+    cout << "bufferevent write error" << endl;
+  }
 }
 
 
 // 私聊
-// 客户端发送： {“cmd”：“private_chat”, "user_from":"", "user_to":"", "text":""}
-// 对方不在线： {"cmd" : "private_chat_reply", "result":"offline"}
-// 对方在线 服务器转发
-// 对方在线 服务器回复： {"cmd":"private_chat_reply", "result":"success"}
+/*
+   客户端发送： {“cmd”：“private_chat”, "user_from":"", "user_to":"", "text":""}
+   对方不在线： {"cmd" : "private_chat_reply", "result":"offline"}
+   对方在线 服务器转发 {"cmd": "private_chat_recv", text:""}
+   对方在线 服务器回复： {"cmd":"private_chat_reply", "result":"success"}
+*/
 
 void Server::server_private_chat(struct bufferevent *bev, Json::Value val) {
+  Json::Value returnVal;
+  Json::StreamWriterBuilder wbuilder;
   struct bufferevent *to_bev = chatlist->info_get_friend_bev(val["user_to"].asString());
   if (to_bev == nullptr) {
-    // 不在线
-    // ;;todo
+    // 对方不在线
+    returnVal["cmd"] = "add_group_reply";
+    returnVal["result"] = "offline";
+    string b = Json::writeString(wbuilder, returnVal);
+    if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+      cout << "bufferevent write error" << endl;
+    }
   }
-
-  // 转发
-  // ;; todo val->to_bev
-
-  //     ;; todo return 
+  else {
+    // 转发
+    returnVal["cmd"] = "private_chat_recv";
+    returnVal["text"] = val["text"];
+    string b = Json::writeString(wbuilder, returnVal);
+    if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
+      cout << "bufferevent write error" << endl;
+    }
+    // 成功
+    returnVal.clear();
+    returnVal["cmd"] = "add_group_reply";
+    returnVal["result"] = "offline";
+    b = Json::writeString(wbuilder, returnVal);
+    if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+      cout << "bufferevent write error" << endl;
+    }
+  }
 }
-
 
 // 群聊
 // 客户端发送：{”cmd“:"group_chat", "user":"", "group":"", "text":""}
