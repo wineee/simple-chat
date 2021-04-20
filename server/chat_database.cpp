@@ -165,13 +165,13 @@ void ChatDataBase::my_database_add_new_friend(string name, string fri) {
 }
 
 bool ChatDataBase::my_database_group_exist(string group_name) {
-   string sql = "show tables like " + group_name;
+   string sql = "show tables like '" + group_name + "'";
    if (mysql_query(mysql, sql.c_str())) {
-     cout << "mysql query erreor" << endl;
+     cout << "mysql query error in my_database_group_exist!" << endl;
    }
    MYSQL_RES *res = mysql_store_result(mysql);
    MYSQL_ROW row = mysql_fetch_row(res);
-   if (nullptr == row) {
+   if (row == nullptr) {
      return false;
    } else {
      return true;
@@ -182,14 +182,14 @@ void ChatDataBase::my_database_add_new_group(string group_name, string user_name
   string sql = "create table " + group_name + " (owner varchar(32), member varchar(4096))";
 
   if (mysql_query(mysql, sql.c_str())) {
-    cout << "mysql query erreor" << endl;
+    cout << "mysql query error in my_database_add_new_group(create)" << endl;
   }
 
-  sql = "insert into " + group_name + " values ('" + user_name + "','"+ user_name +"')";
+  sql = "insert into " + group_name + " values ('" + user_name + "','"+ user_name +"|')";
 
   
   if (mysql_query(mysql, sql.c_str())) {
-    cout << "mysql query erreor" << endl;
+    cout << "mysql query error my_database_add_new_group(set)" << endl;
   }
 }
 

@@ -11,7 +11,7 @@ dataSocket = socket(AF_INET, SOCK_STREAM)
 # 连接服务端socket
 dataSocket.connect((IP, SERVER_PORT))
 
-print("R 注册| L 登陆 |E 退出")
+print("R 注册| L 登陆| G 建群| E 退出")
 
 while True:
     # 从终端读入用户输入的字符串
@@ -36,6 +36,16 @@ while True:
         name = input("name:")
         passwd = input("passwd:")
         data = {"cmd": "login", "user": name, "passwd": passwd}
+        jdata = json.dumps(data)
+        dataSocket.send(jdata.encode())
+        recved = dataSocket.recv(BUFLEN)
+        if not recved:
+            break
+        print(recved.decode())
+    if toSend == "G":
+        name = input("name:")
+        group = input("group:")
+        data = {"cmd": "create_group", "user": name, "group": group}
         jdata = json.dumps(data)
         dataSocket.send(jdata.encode())
         recved = dataSocket.recv(BUFLEN)

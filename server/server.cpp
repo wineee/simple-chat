@@ -214,22 +214,32 @@ void Server::event_cb(struct bufferevent *bev, short what, void *ctx) {
 
 
 // 创建群聊
-// 客户端发送 {"cmd":"create_group", "user":"LiHua", "group":"lala"}
-// 群已经存在 {"cmd":"create_group_reply", "result":"group_exist"}
-// 群不存在 {"cmd":"create_group_reply", "result":"success"}
-
+/*
+   客户端发送 {"cmd":"create_group", "user":"LiHua", "group":"lala"}
+   群已经存在 {"cmd":"create_group_reply", "result":"group_exist"}
+   群不存在 {"cmd":"create_group_reply", "result":"success"}
+*/
 
 void Server::server_create_group(struct bufferevent *bev, Json::Value val) {
   chatdb->my_database_connect("chatgroup");
+  Json::Value returnVal;
+  Json::StreamWriterBuilder wbuilder;
   if (chatdb->my_database_group_exist(val["group"].asString())) {
-
-    // ;;todo
+    returnVal["cmd"] = "create_group_reply";
+    returnVal["result"] = "group_exist";
+    string b = Json::writeString(wbuilder, returnVal);
+    if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+      cout << "bufferevent write error" << endl;
+    }
   }
   else {
-
     chatdb->my_database_add_new_group(val["group"].asString(), val["user"].asString());
-
-    // ;; todo return 
+    returnVal["cmd"] = "create_group_reply";
+    returnVal["result"] = "success";
+    string b = Json::writeString(wbuilder, returnVal);
+    if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+      cout << "bufferevent write error" << endl;
+    }
   }
   chatdb->my_database_disconnect();
 }
