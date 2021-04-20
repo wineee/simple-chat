@@ -12,7 +12,7 @@ dataSocket = socket(AF_INET, SOCK_STREAM)
 # 连接服务端socket
 dataSocket.connect((IP, SERVER_PORT))
 
-print("R 注册| L 登陆| A 加好友| G 建群| C 私聊| E 退出")
+print("R 注册| L 登陆| A 加好友| G 建群| C 私聊| M 群成员| E 退出")
 
 while True:
     # 从终端读入用户输入的字符串
@@ -41,7 +41,9 @@ while True:
         name_to = input("user_to:")
         text = input("text")
         data = {"cmd": "private_chat", "user_from": name_from, "user_to": name_to, "text": text}
-
+    if toSend == "M":
+        group = input("group name:")
+        data = {"cmd": "get_group_member", "group": group}
     if data != "":
         jdata = json.dumps(data)
         # 发送消息，也要编码为 bytes

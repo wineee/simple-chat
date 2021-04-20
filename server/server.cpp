@@ -357,9 +357,12 @@ void Server::server_private_chat(struct bufferevent *bev, Json::Value val) {
 }
 
 // 群聊
-// 客户端发送：{”cmd“:"group_chat", "user":"", "group":"", "text":""}
-// 服务器转发：{"cmd":"group_chat_reply", "user":"", "group":"", "text":""}
-// 服务器回复:{"cmd":"group_chat_reply", "result":"success"}
+/*
+   客户端发送：{”cmd“:"group_chat", "user":"", "group":"", "text":""}
+   服务器转发：{"cmd":"group_chat_reply", "user":"", "group":"", "text":""}
+   服务器回复:{"cmd":"group_chat_reply", "result":"success"}
+*/
+
 void Server::server_group_chat(struct bufferevent *bev, Json::Value val) {
   /*
   for (auto it = chatlist->group_info->begin(); it != chatlist->group_info->end(); it++) {
@@ -377,12 +380,21 @@ void Server::server_group_chat(struct bufferevent *bev, Json::Value val) {
 }
 
 // 获取群成员
-// 客户端发送:{"cmd":"get_group_member", "group":""}
-// 服务器回复:{"cmd":"get_group_member_reply","member":""}
+/*
+  客户端发送:{"cmd":"get_group_member""get_group_member", "group":""}
+  服务器回复:{"cmd":"get_group_member_reply","member":""}
+*/
 
 void Server::server_get_group_member(struct bufferevent *bev, Json::Value val) {
   string member = chatlist->info_get_group_member(val["group"].asString());
-  // ;; todo
+  Json::Value returnVal;
+  Json::StreamWriterBuilder wbuilder;
+  returnVal["cmd"] = "get_group_member_reply";
+  returnVal["member"] = member;
+  string b = Json::writeString(wbuilder, returnVal);
+  if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+    cout << "bufferevent write error" << endl;
+  }
 }
 
 
