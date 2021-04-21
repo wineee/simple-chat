@@ -413,12 +413,13 @@ void Server::server_get_group_member(struct bufferevent *bev, Json::Value val) {
 
 
 // 用户下线
-// 客户端发送 {"cmd":"offline", "user":""}
-// 向好友返回 {"cmd":"friend_offline", "result":"name"}
+/*
+  客户端发送 {"cmd":"offline", "user":""}
+  向好友返回 {"cmd":"friend_offline", "result":"name"}
+*/
 void Server::server_user_offline(struct bufferevent *bev, Json::Value val) {
   // 从链表中删除用户
-  /*
-  for (auto it = chatlist->online_user->begin(); it != online_user->end(); it++) {
+  for (auto it = chatlist->online_user->begin(); it != chatlist->online_user->end(); it++) {
     if (it->name == val["user"].asString()) {
       chatlist->online_user->erase(it);
       break;
@@ -426,9 +427,27 @@ void Server::server_user_offline(struct bufferevent *bev, Json::Value val) {
   }
   
   // 获取好友列表并返回
-  //todo
-  /
-*/ 
+  Json::Value returnVal;
+  Json::StreamWriterBuilder wbuilder;
+  string b = Json::writeString(wbuilder, returnVal);
+  returnVal["cmd"] = "friend_offline";
+  returnVal["result"] = val["user"];
+  string fri_list = chatdb->my_database_get_friend(val["user"].asString());
+  string::size_type start = 1, end = 1;
+  while (start < fri_list.size()) {
+    end = fri_list.find(start, '|');
+    if (end == string::npos) {
+      break;
+    }
+    string fri = fri_list.substr(start, end-start);
+    struct bufferevent *to_bev = chatlist->info_get_friend_bev(fri);
+    if (to_bev != nullptr) {
+      if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+      cout << "bufferevent write error" << endl;
+      }
+    }
+    start = end+1;
+  }
 }
 
 
