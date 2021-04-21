@@ -1,7 +1,7 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include <event.h>
+#include <event2/event.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
