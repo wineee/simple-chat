@@ -364,19 +364,33 @@ void Server::server_private_chat(struct bufferevent *bev, Json::Value val) {
 */
 
 void Server::server_group_chat(struct bufferevent *bev, Json::Value val) {
-  /*
+  Json::Value returnVal;
+  Json::StreamWriterBuilder wbuilder;
+  returnVal["cmd"] = "group_chat_reply";
+  returnVal["user"] = val["user"];
+  returnVal["group"] = val["group"];
+  returnVal["text"] = val["text"];
+  string b = Json::writeString(wbuilder, returnVal);
   for (auto it = chatlist->group_info->begin(); it != chatlist->group_info->end(); it++) {
     if (val["group"].asString() == it->name) {
-      for (auto u = it->l->begin(); u != it->l->end(); u++) {
-	struct bufferevent *to_bev = chatlist->info_get_friend_bev(i->name);
+      for (auto member = it->l->begin(); member != it->l->end(); member++) {
+	struct bufferevent *to_bev = chatlist->info_get_friend_bev(member->name);
 	if (bev != nullptr) {
-	  //	  ;; todo 转发
+	  if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
+	    cout << "bufferevent write error" << endl;
+	  }
 	}
       }
     }
   }
-  //;; todo 回复成功
-*/
+  // 回复发送成功
+  returnVal.clear();
+  returnVal["cmd"] = "group_chat_reply";
+  returnVal["result"] = "success";
+  b = Json::writeString(wbuilder, returnVal);
+  if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+    cout << "bufferevent write error" << endl;
+  }
 }
 
 // 获取群成员
