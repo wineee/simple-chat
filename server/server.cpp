@@ -443,7 +443,7 @@ void Server::server_user_offline(struct bufferevent *bev, Json::Value val) {
     struct bufferevent *to_bev = chatlist->info_get_friend_bev(fri);
     if (to_bev != nullptr) {
       if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
-      cout << "bufferevent write error" << endl;
+	cout << "bufferevent write error" << endl;
       }
     }
     start = end+1;
@@ -452,46 +452,83 @@ void Server::server_user_offline(struct bufferevent *bev, Json::Value val) {
 
 
 // 文件传输
-// 客户端发送 {"cmd":"send_file", "from_user":"", "to_user":"", "length":""}
-// 如果对方不在线 {"cmd":"send_file_relpy","result":"offline"}
-// 发送 {"cmd":"send_file_port_reply","port":"8080"}
-// 接受 {"cmd":"revc_file_port_reply","port":"8080"}
-// 超时{"cmd":"send_file_reply","result":"timeout"}
+/*
+   客户端发送 {"cmd":"send_file", "from_user":"", "to_user":"", "length":""}
+   如果对方不在线 {"cmd":"send_file_relpy","result":"offline"}
+   发送 {"cmd":"send_file_port_reply","port":"8080"}
+   接受 {"cmd":"revc_file_port_reply","port":"8080"}
+   超时{"cmd":"send_file_reply","result":"timeout"}
+*/
 void Server::server_send_file(struct bufferevent *bev, Json::Value val) {
-  struct bufferevent *todev = chatlist->info_get_friend_bev(val["to_user"].asString());
-  if (todev == nullptr) {
-    //    ;; todo
+  struct bufferevent *to_bev = chatlist->info_get_friend_bev(val["to_user"].asString());
+  Json::Value returnVal;
+  Json::StreamWriterBuilder wbuilder;
+  string b;
+  if (to_bev == nullptr) {
+    returnVal["cmd"] = "send_file_reply";
+    returnVal["result"] = "offline";
+    b = Json::writeString(wbuilder, returnVal);
+    if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+	cout << "bufferevent write error" << endl;
+    }
   }
   // 启动新线程，创建文件服务器
   int port = 8080, from_fd = 0, to_fd = 0;
   thread send_file_thread(send_file_hander, val["length"].asInt(), port, &from_fd, &to_fd);
   send_file_thread.detach();
-  /*
-  ;; todo 返回 port-》 bev
+  //;; 返回 port -> bev
+  returnVal["cmd"] = "send_file_port_reply";
+  returnVal["port"] = "8080";
+  b = Json::writeString(wbuilder, returnVal);
+  if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+    cout << "bufferevent write error" << endl;
+  }
+  //
   int count = 0;
   while(from_fd <= 0) {
     count++;
     usleep(100000);
     if (count == 100) {
       pthread_cancel(send_file_thread.native_handle()); // 取消线程
-      ;; todo cha shi;
-      return;
+      returnVal.clear();
+      returnVal["cmd"] = "send_file_reply";
+      returnVal["result"] = "timeout";
+      b = Json::writeString(wbuilder, returnVal);
+      if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+	cout << "bufferevent write error" << endl;
       }
-      }*/
+      return;
+    }
+  }
 
-// 返回端口号给接收客户端
-//;; todo;
-/*
-  int count = 0;
+  // 返回端口号给接收客户端
+  returnVal.clear();
+  returnVal["cmd"] = "revc_file_port_reply";
+  returnVal["port"] = "8080";
+  b = Json::writeString(wbuilder, returnVal);
+  if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
+    cout << "bufferevent write error" << endl;
+  }
+
+  count = 0;
   while(to_fd <= 0) {
     count++;
     usleep(100000);
     if (count == 100) {
       pthread_cancel(send_file_thread.native_handle()); // 取消线程
-      // ;; todo cha shi;
+      returnVal.clear();
+      returnVal["cmd"] = "send_file_reply";
+      returnVal["result"] = "timeout";
+      b = Json::writeString(wbuilder, returnVal);
+      if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+	cout << "bufferevent write error" << endl;
+      }
+      if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
+	cout << "bufferevent write error" << endl;
+      }
       return;
     }
-    }*/
+  }
 }
 
 void Server::send_file_hander(size_t length, int port, int *f_fd, int *t_fd) {
