@@ -9,7 +9,7 @@
 #include <event2/listener.h>
 #include <thread>
 #include <iostream>
-#include <json/json.h>
+#include <jsoncpp/json/json.h>
 #include <unistd.h>
 
 #include "chatlist.h"
