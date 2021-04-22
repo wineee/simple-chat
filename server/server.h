@@ -16,6 +16,9 @@
 
 using namespace std;
 
+#define IP "172.18.90.51"
+#define PORT 8000
+
 class Server {
  private:
   struct event_base *base; // 事件集合
@@ -38,7 +41,7 @@ class Server {
   static void server_send_file(struct bufferevent *bev, Json::Value val);
   static void send_file_hander(size_t length, int port, int *from_fd, int *to_fd);
  public:
-  Server(const char *ip = "120.0.0.1", int port = 8000);
+  Server(const char *ip = IP, int port = PORT);
   ~Server();
 };
   

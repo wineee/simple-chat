@@ -16,7 +16,7 @@ Server::Server(const char *ip, int port) {
 				     LEV_OPT_CLOSE_ON_FREE | LEV_OPT_REUSEABLE, 10, (struct sockaddr *)&server_addr, sizeof(server_addr));
 
   if (listener == nullptr) {
-    cout << "" << endl;
+    cout << "listener is null!" << endl;
   }
 
   event_base_dispatch(base);
@@ -171,7 +171,7 @@ void Server::server_login(struct bufferevent *bev, Json::Value val) {
     }
 
     // 向好友发送上线通知
-    //;; todo*/
+    //;; todo
     //cout << " ok " << endl;
   }
 

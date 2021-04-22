@@ -2,8 +2,8 @@ from socket import *
 import json
 from threading import Thread
 
-IP = "127.0.0.1"
-SERVER_PORT = 8000
+IP = "172.18.90.51"
+SERVER_PORT = 8000      
 BUFLEN = 1024
 
 # 实例化一个socket对象，指明协议
