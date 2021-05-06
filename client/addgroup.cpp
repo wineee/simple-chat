@@ -21,8 +21,7 @@ void AddGroup::on_cancelButton_clicked()
 }
 
 
-void AddGroup::on_addButton_clicked()
-{
+void AddGroup::on_addButton_clicked() {
     QString groupName = ui->lineEdit->text();
     QJsonObject obj;
     obj.insert("cmd","add_group");
@@ -31,5 +30,4 @@ void AddGroup::on_addButton_clicked()
     QByteArray ba = QJsonDocument(obj).toJson();
     socket->write(ba);
     this->close();
-
 }

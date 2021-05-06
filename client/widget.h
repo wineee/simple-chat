@@ -3,11 +3,11 @@
 
 #include <QWidget>
 #include <QTcpSocket>
-#include<QHostAddress>
-#include<QMessageBox>
-#include<QJsonObject>
-#include<QJsonDocument>
-#include"chatlist.h"
+#include <QHostAddress>
+#include <QMessageBox>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include "chatlist.h"
 
 
 namespace Ui {
@@ -22,13 +22,10 @@ public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
 
-
 private slots:
     void connect_success();
     void server_reply();
-
     void on_registerButton_clicked();
-
     void on_loginButton_clicked();
 
 private:

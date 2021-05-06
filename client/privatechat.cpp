@@ -12,9 +12,7 @@ PrivateChat::PrivateChat(QTcpSocket *s, QString u, QString f, Chatlist *c, QList
     mainWidget = c;
     chatWidgetList = l;
 
-
-    connect(mainWidget,&Chatlist::signal_to_sub_widget,this,&PrivateChat::show_text_slot);
-
+    connect(mainWidget, &Chatlist::signal_to_sub_widget, this, &PrivateChat::show_text_slot);
 }
 
 PrivateChat::~PrivateChat()
@@ -36,30 +34,24 @@ void PrivateChat::on_sendButton_clicked()
     ui->lineEdit->clear();
     ui->textEdit->append(text);
     ui->textEdit->append("\n");
-
 }
 
-
-void PrivateChat::show_text_slot(QJsonObject obj){
-
-    if(obj.value("cmd").toString()=="private_chat"){
-
-        if(obj.value("user_from").toString()==friendName){
-            if(this->isMinimized()){
+void PrivateChat::show_text_slot(QJsonObject obj) {
+    if (obj.value("cmd").toString() == "private_chat") {
+        if (obj.value("user_from").toString() == friendName) {
+            if (this->isMinimized()) {
                this->showNormal();
             }
             this->activateWindow();//显示在最上面
             ui->textEdit->append(obj.value("text").toString());
             ui->textEdit->append("\n");
         }
-
     }
-
 }
 
-void PrivateChat::closeEvent(QCloseEvent *event){
-    for(int i=0;i<chatWidgetList->size();i++){
-        if(chatWidgetList->at(i).name==friendName){
+void PrivateChat::closeEvent(QCloseEvent *event) {
+    for (int i = 0; i < chatWidgetList->size(); i++) {
+        if (chatWidgetList->at(i).name==friendName) {
             chatWidgetList->removeAt(i);
             break;
         }
@@ -67,25 +59,16 @@ void PrivateChat::closeEvent(QCloseEvent *event){
     //event->accept();//确实关闭窗口
 }
 
-
-
-
-
-
-
-
 /*void PrivateChat::on_pushButton_2_clicked()
 {
 
 }*/
-
 
 void PrivateChat::on_fileButton_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this,"发送文件",QCoreApplication::applicationFilePath());
     if(fileName.isEmpty()){
         QMessageBox::warning(this,"发送文件提示","请选择一个文件");
-
     }else{
         QFile file(fileName);
         file.open(QIODevice::ReadOnly);
@@ -94,12 +77,9 @@ void PrivateChat::on_fileButton_clicked()
         obj.insert("from_user",userName);
         obj.insert("to_user",friendName);
         obj.insert("length",file.size());
-
         obj.insert("filename",fileName);
         QByteArray ba = QJsonDocument(obj).toJson();
         socket->write(ba);
-
-
     }
 }
 

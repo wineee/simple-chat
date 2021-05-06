@@ -2,9 +2,9 @@
 #define ADDGROUP_H
 
 #include <QWidget>
-#include<QTcpSocket>
-#include<QJsonObject>
-#include<QJsonDocument>
+#include <QTcpSocket>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 namespace Ui {
 class AddGroup;
@@ -20,9 +20,7 @@ public:
 
 private slots:
     void on_cancelButton_clicked();
-
     //void on_pushButton_2_clicked();
-
     void on_addButton_clicked();
 
 private:

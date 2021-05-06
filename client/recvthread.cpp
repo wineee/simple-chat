@@ -2,7 +2,6 @@
 
 RecvThread::RecvThread(QJsonObject obj)
 {
-
     total = 0;
     port = obj.value("port").toInt();
     fileLength = obj.value("length").toInt();
@@ -12,8 +11,8 @@ RecvThread::RecvThread(QJsonObject obj)
     fileName = strList.at(strList.size()-1);
 
 }
-void RecvThread::run()
-{
+
+void RecvThread::run() {
     //在子线程里面初始化
     file = new QFile(fileName);
     file->open(QIODevice::WriteOnly);
@@ -30,8 +29,8 @@ void RecvThread::run()
     }
     exec();//死循环使run一直运行
 }
-void RecvThread::recv_file()
-{
+
+void RecvThread::recv_file() {
     QByteArray ba = recvSocket->readAll();
     total += ba.size();
     file->write(ba);

@@ -1,7 +1,7 @@
 #include "groupchat.h"
 #include "ui_groupchat.h"
 
-GroupChat::GroupChat(QTcpSocket *s, QString g, QString u, Chatlist * c,QList<groupWidgetInfo> * l, QWidget *parent) :
+GroupChat::GroupChat(QTcpSocket *s, QString g, QString u, Chatlist *c, QList<groupWidgetInfo> *l, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GroupChat)
 {
@@ -12,17 +12,14 @@ GroupChat::GroupChat(QTcpSocket *s, QString g, QString u, Chatlist * c,QList<gro
     mainWidget = c;
     groupWidgetList = l;
 
-
     QJsonObject obj;
     obj.insert("cmd","get_group_member");
     obj.insert("group",groupName);
     QByteArray ba = QJsonDocument(obj).toJson();
     socket->write(ba);
 
-    connect(mainWidget,&Chatlist::signal_to_sub_widget_member,this,&GroupChat::show_group_member);
-    connect(mainWidget,&Chatlist::signal_to_sub_widget_group,this,&GroupChat::show_group_text);
-
-
+    connect(mainWidget, &Chatlist::signal_to_sub_widget_member, this, &GroupChat::show_group_member);
+    connect(mainWidget, &Chatlist::signal_to_sub_widget_group, this, &GroupChat::show_group_text);
 }
 
 GroupChat::~GroupChat()
@@ -31,19 +28,18 @@ GroupChat::~GroupChat()
 }
 
 void GroupChat::show_group_member(QJsonObject obj){
-    if(obj.value("cmd").toString()=="get_group_member_reply"){
-        if(obj.value("group").toString()==groupName){
+    if (obj.value("cmd").toString() == "get_group_member_reply") {
+        if (obj.value("group").toString()==groupName){
             //得到的是带有|的字符串
             QStringList strList = obj.value("member").toString().split("|");
-            for(int i=0;i<strList.size();i++){
-                ui->listWidget->addItem(strList.at((i)));
+            for (int i = 0; i < strList.size(); i++) {
+                ui->listWidget->addItem(strList.at(i));
             }
         }
     }
 }
 
-void GroupChat::on_sendButton_clicked()
-{
+void GroupChat::on_sendButton_clicked() {
     QString text = ui->lineEdit->text();
     QJsonObject obj;
     obj.insert("cmd","group_chat");
@@ -57,17 +53,13 @@ void GroupChat::on_sendButton_clicked()
     ui->lineEdit->clear();
     ui->textEdit->append(text);
     ui->textEdit->append("\n");
-
-
-
-
-
 }
+
 void GroupChat::show_group_text(QJsonObject obj){
     //有可能同时打开多个群聊窗口，收到但是不用都显示
-    if(obj.value("cmd").toString()=="group_chat"){
-        if(obj.value("group").toString()==groupName){
-            if(this->isMinimized()){
+    if (obj.value("cmd").toString()=="group_chat") {
+        if (obj.value("group").toString()==groupName) {
+            if (this->isMinimized()) {
                 this->showNormal();
             }
             this->activateWindow();
@@ -75,14 +67,11 @@ void GroupChat::show_group_text(QJsonObject obj){
             ui->textEdit->append("\n");
         }
     }
-
 }
 
-
-
-void GroupChat::closeEvent(QCloseEvent *event){
-    for(int i=0;i<groupWidgetList->size();i++){
-        if(groupWidgetList->at(i).name==groupName){
+void GroupChat::closeEvent(QCloseEvent *event) {
+    for(int i=0;i<groupWidgetList->size();i++) {
+        if(groupWidgetList->at(i).name==groupName) {
             groupWidgetList->removeAt(i);
         }
     }
@@ -90,11 +79,7 @@ void GroupChat::closeEvent(QCloseEvent *event){
 
 }
 
-
-
-
 void GroupChat::on_fileButton_clicked()
 {
     //QString fileName =
-
 }

@@ -31,8 +31,6 @@ private slots:
     void on_sendButton_clicked();
     void show_text_slot(QJsonObject);
 
-    //void on_pushButton_2_clicked();
-
     void on_pushButton_2_clicked();
 
     void on_fileButton_clicked();

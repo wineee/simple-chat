@@ -7,12 +7,10 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
     socket = new QTcpSocket;
-    socket->connectToHost(QHostAddress("39.108.144.134"),8000);//ip地址和端口号
+    socket->connectToHost(QHostAddress("39.108.144.134"), 8000);//ip地址和端口号
 
-    connect(socket,&QTcpSocket::connected,this,&Widget::connect_success);
-    //阿里云添加安全组规则
-    connect(socket,&QTcpSocket::readyRead,this,&Widget::server_reply);
-
+    connect(socket, &QTcpSocket::connected, this, &Widget::connect_success);
+    connect(socket, &QTcpSocket::readyRead, this, &Widget::server_reply);
 }
 
 Widget::~Widget()
@@ -23,8 +21,6 @@ Widget::~Widget()
 void Widget::connect_success()
 {
     QMessageBox::information(this,"链接提示","链接服务器成功");
-
-
 }
 
 void Widget::on_registerButton_clicked()
@@ -39,22 +35,18 @@ void Widget::on_registerButton_clicked()
 
     QByteArray ba = QJsonDocument(obj).toJson();
     socket->write(ba);
-    //完成注册肝功能
+    //完成注册功能
 }
 
-void Widget::server_reply()   //服务器的回复
-{
+void Widget::server_reply() {  //服务器的回复
     //socket对象有数据可读的时候出发槽函数
     QByteArray ba = socket->readAll();
-    QJsonObject  obj = QJsonDocument::fromJson(ba).object();
+    QJsonObject obj = QJsonDocument::fromJson(ba).object();
 
     QString cmd = obj.value("cmd").toString();
-    if(cmd=="register_reply")
-    {
-
+    if(cmd=="register_reply") {
         client_register_handler(obj.value("result").toString());//注册的处理函数
-    }else if(cmd=="login_reply"){
-
+    } else if(cmd=="login_reply") {
         //client_login_handler(obj.value("result").toString(),obj.value("friend").toString(),obj.value("Group").toString());
         QString str = QString(obj.value("group").toString());
 
@@ -66,23 +58,17 @@ void Widget::server_reply()   //服务器的回复
 
 }
 
-void Widget::client_register_handler(QString res)
-{
-
-    if(res =="success")//服务器返回success
-    {
-
-       QMessageBox::information(this,"注册提示","注册成功");
-
+void Widget::client_register_handler(QString res) {
+    if(res =="success") {//服务器返回success
+        QMessageBox::information(this,"注册提示","注册成功");
     }
-    else if(res=="failure"){
+    else if(res=="failure") {
         QMessageBox::information(this,"注册提示","注册失败");//已经存在该用户
     }
 }
 
 
-void Widget::on_loginButton_clicked()
-{
+void Widget::on_loginButton_clicked() {
     QString username = ui->userLineEdit->text();
     QString password = ui->passwordLineEdit->text();
 
@@ -106,16 +92,14 @@ void Widget::client_login_handler(QString res,QString fri,QString group)
         QMessageBox::warning(this,"登录提示","密码错误");
     }else if(res == "success"){
         //跳到登录成功的界面
-       this->hide();
-       socket->disconnect(SIGNAL(readyRead()));
-       Chatlist * c = new Chatlist(socket,fri,group,userName);
-       c->setWindowTitle(userName);
-       c->show();
+        this->hide();
+        socket->disconnect(SIGNAL(readyRead()));
+        Chatlist * c = new Chatlist(socket,fri,group,userName);
+        c->setWindowTitle(userName);
+        c->show();
     }else {
         QMessageBox::warning(this,"登录错误",res);
-
     }
-
 }
 
 
