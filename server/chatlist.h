@@ -37,6 +37,7 @@ class ChatInfo {
   void info_group_add_user(string group_name, string user_name);
   string info_get_group_member(string group_name);
   struct bufferevent *info_get_friend_bev(string);
+  void info_add_new_group(string,string);
 };
 
 #endif

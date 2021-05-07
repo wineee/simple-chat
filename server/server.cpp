@@ -163,7 +163,8 @@ void Server::server_login(struct bufferevent *bev, Json::Value val) {
     string fri_list = chatdb->my_database_get_friend(val["user"].asString());
     string group_list = chatdb->my_database_get_group(val["user"].asString());
     returnVal["cmd"] = "login_reply";
-    returnVal["result"] = fri_list;
+    returnVal["result"]="success";
+    returnVal["friend"]=fri_list;
     returnVal["group"] = group_list;
     string b = Json::writeString(wbuilder, returnVal);
     if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
@@ -202,6 +203,7 @@ void Server::server_add_friend(struct bufferevent *bev, Json::Value val) {
   }
   // 已经是好友了
   else if (chatdb->my_database_is_friend(val["user"].asString(), val["friend"].asString())) {
+    returnVal.clear();
     returnVal["cmd"] = "add_reply";
     returnVal["result"] = "already_friend";
     string b = Json::writeString(wbuilder, returnVal);
@@ -214,8 +216,10 @@ void Server::server_add_friend(struct bufferevent *bev, Json::Value val) {
     chatdb->my_database_add_new_friend(val["user"].asString(), val["friend"].asString());
     chatdb->my_database_add_new_friend(val["friend"].asString(), val["user"].asString());
     // 回复客户端添加成功
+    returnVal.clear();
     returnVal["cmd"] = "add_reply";
     returnVal["result"] = "success";
+    returnVal["friend"] = val["friend"];
     string b = Json::writeString(wbuilder, returnVal);
     if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
       cout << "bufferevent write error" << endl;
@@ -227,11 +231,11 @@ void Server::server_add_friend(struct bufferevent *bev, Json::Value val) {
     }
     else {
       returnVal.clear();
-      returnVal["cmd"] = "add_reply";
+      returnVal["cmd"] = "add_friend_reply";
       returnVal["result"] = val["user"];
       b = Json::writeString(wbuilder, returnVal);
       if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
-	cout << "bufferevent write error" << endl;
+      	cout << "bufferevent write error" << endl;
       }
     }
   }
@@ -263,9 +267,19 @@ void Server::server_create_group(struct bufferevent *bev, Json::Value val) {
     }
   }
   else {
+
     chatdb->my_database_add_new_group(val["group"].asString(), val["user"].asString());
+    //修改数据库个人信息
+    chatdb->my_database_disconnect();
+    chatdb->my_database_connect("user");
+    chatdb->my_database_user_add_group(val["user"].asString(), val["group"].asString());
+
+    //服务器端有一个群列表，修改群列表
+    chatlist->info_add_new_group(val["group"].asString(),val["user"].asString());
+
     returnVal["cmd"] = "create_group_reply";
     returnVal["result"] = "success";
+    returnVal["group"]=val["group"];
     string b = Json::writeString(wbuilder, returnVal);
     if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
       cout << "bufferevent write error" << endl;
@@ -308,6 +322,7 @@ void Server::server_add_group(struct bufferevent *bev, Json::Value val) {
     // 修改链表
     chatlist->info_group_add_user(val["group"].asString(), val["user"].asString());
     returnVal["result"] = "success";
+    returnVal["group"]=val["group"];
   }
   string b = Json::writeString(wbuilder, returnVal);
   if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
@@ -319,8 +334,8 @@ void Server::server_add_group(struct bufferevent *bev, Json::Value val) {
 // 私聊
 /*
    客户端发送： {“cmd”：“private_chat”, "user_from":"", "user_to":"", "text":""}
-   对方不在线： {"cmd" : "private_chat_reply", "result":"offline"}
-   对方在线 服务器转发 {"cmd": "private_chat_recv", text:""}
+   对方不在线： {"cmd": "private_chat_reply", "result":"offline"}
+   对方在线 服务器转发: {"cmd": "private_chat_recv", "user_from","", text:""}
    对方在线 服务器回复： {"cmd":"private_chat_reply", "result":"success"}
 */
 
@@ -341,6 +356,7 @@ void Server::server_private_chat(struct bufferevent *bev, Json::Value val) {
     // 转发
     returnVal["cmd"] = "private_chat_recv";
     returnVal["text"] = val["text"];
+    returnVal["user_from"] = val["user_from"];
     string b = Json::writeString(wbuilder, returnVal);
     if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
       cout << "bufferevent write error" << endl;
@@ -429,21 +445,25 @@ void Server::server_user_offline(struct bufferevent *bev, Json::Value val) {
   // 获取好友列表并返回
   Json::Value returnVal;
   Json::StreamWriterBuilder wbuilder;
-  string b = Json::writeString(wbuilder, returnVal);
   returnVal["cmd"] = "friend_offline";
   returnVal["result"] = val["user"];
+  string b = Json::writeString(wbuilder, returnVal);
+  chatdb->my_database_connect("user");
   string fri_list = chatdb->my_database_get_friend(val["user"].asString());
+  chatdb->my_database_disconnect();
   string::size_type start = 1, end = 1;
   while (start < fri_list.size()) {
-    end = fri_list.find(start, '|');
+    end = fri_list.find('|', start);
     if (end == string::npos) {
       break;
     }
     string fri = fri_list.substr(start, end-start);
+    cout << start << " " << end << " " << fri << " hhh\n"; 
     struct bufferevent *to_bev = chatlist->info_get_friend_bev(fri);
     if (to_bev != nullptr) {
+      //cout << b;
       if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
-	cout << "bufferevent write error" << endl;
+	      cout << "bufferevent write error" << endl;
       }
     }
     start = end+1;
@@ -479,8 +499,12 @@ void Server::server_send_file(struct bufferevent *bev, Json::Value val) {
   //;; 返回 port -> bev
   returnVal["cmd"] = "send_file_port_reply";
   returnVal["port"] = "8080";
+  returnVal["filename"]=val["filename"];
+  returnVal["length"] = val["length"];
   b = Json::writeString(wbuilder, returnVal);
-  if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+ // if (bufferevent_write(bev, b.c_str(), b.size()) < 0)
+  if(send(to_bev->ev_read.ev_fd,b.c_str(),strlen(b.c_str()),0)<0) 
+  {
     cout << "bufferevent write error" << endl;
   }
   //
@@ -505,9 +529,13 @@ void Server::server_send_file(struct bufferevent *bev, Json::Value val) {
   returnVal.clear();
   returnVal["cmd"] = "revc_file_port_reply";
   returnVal["port"] = "8080";
+  returnVal["filename"]=val["filename"];
+  returnVal["length"] = val["length"];
   b = Json::writeString(wbuilder, returnVal);
-  if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
-    cout << "bufferevent write error" << endl;
+ // if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
+ if(send(to_bev->ev_read.ev_fd,b.c_str(),strlen(b.c_str()),0)<0) 
+ { 
+  cout << "bufferevent write error" << endl;
   }
 
   count = 0;
@@ -536,6 +564,8 @@ void Server::send_file_hander(size_t length, int port, int *f_fd, int *t_fd) {
   if (sockfd == -1) {
     return;
   }
+  int opt = 1;
+  setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(opt));
 
   struct sockaddr_in server_addr, client_addr;
   memset(&server_addr, 0, sizeof(server_addr));
@@ -562,4 +592,7 @@ void Server::send_file_hander(size_t length, int port, int *f_fd, int *t_fd) {
     }
     memset(buf, 0, sizeof(buf));
   }
+  close(*f_fd);
+  close(*t_fd);
+  close(sockfd);
 }

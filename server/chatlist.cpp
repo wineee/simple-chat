@@ -8,15 +8,12 @@ ChatInfo::ChatInfo() {
 
   string group_name[MAXNUM];
   int group_num = mydatabase->my_database_get_group_name(group_name);
-
   cout << group_num << endl;
   for (int i = 0; i < group_num; i++) {
     cout << group_name[i] << "\n";
-
     Group g;
     g.name = group_name[i];
     g.l = new list<GroupUser>;
-
     string member;
     mydatabase->my_database_get_group_member(group_name[i], member);
     cout << member << endl;
@@ -94,5 +91,16 @@ string ChatInfo::info_get_group_member(string group_name) {
     }
   }
   return "";
+}
+
+void ChatInfo::info_add_new_group(string group_name,string user_name){
+      Group g;
+      g.name = group_name;
+      g.l = new list<GroupUser>;
+      group_info->push_back(g);
+
+      GroupUser u;
+      u.name = user_name;
+      g.l->push_back(u);
 }
 
