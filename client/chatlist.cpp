@@ -65,7 +65,7 @@ void Chatlist::server_reply() {
         client_send_file_reply(obj.value("result").toString());
     }else if(cmd == "send_file_port_reply") {
         client_send_file_port_reply(obj);
-    }else if(cmd=="recv_file_port_reply") {
+    }else if(cmd == "recv_file_port_reply") {
         client_recv_file_port_reply(obj);
     }
 }
@@ -79,7 +79,6 @@ void Chatlist::client_login_reply(QString fri) {
 void Chatlist::client_add_friend_reply(QJsonObject & obj){
     if(obj.value("result").toString()=="user_not_exist"){
         QMessageBox::warning(this,"添加好友提醒","好友不存在");
-
     }else if(obj.value("result").toString()=="already_friend"){
         QMessageBox::warning(this,"添加好友提醒","已经是好友");
     }else if(obj.value("result").toString() =="success"){
@@ -118,7 +117,7 @@ void Chatlist::client_chat_reply(QJsonObject &obj) {
     //当收到消息时，自动跳出一个窗口或者已经打开了
     //看一下是谁发来的，先判断一下这个窗口有没有被打开
     int flag = 0;
-    for(int i = 0; i < chatWidgetList.size(); i++){
+    for(int i = 0; i < chatWidgetList.size(); i++) {
         if(chatWidgetList.at(i).name == obj.value("user_from").toString()) {
             flag = 1;
             break;
@@ -134,7 +133,7 @@ void Chatlist::client_chat_reply(QJsonObject &obj) {
         chatWidgetList.push_back(c);
     }
     //emit signal_to_sub_widget(obj.value("text").toString());        //发送信号
-     emit signal_to_sub_widget(obj);        //发送信号
+    emit signal_to_sub_widget(obj);        //发送信号
 
 }
 
@@ -232,7 +231,6 @@ void Chatlist::on_groupList_double_clicked()
 }
 
 void Chatlist::closeEvent(QCloseEvent *event){
-
     QJsonObject obj;
     obj.insert("cmd","offline");
     obj.insert("user",userName);
@@ -241,7 +239,6 @@ void Chatlist::closeEvent(QCloseEvent *event){
     socket->write(ba);
     socket->flush();
     //刷新socket缓冲区
-
     //event->accept();
 }
 

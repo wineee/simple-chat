@@ -24,10 +24,10 @@ void PrivateChat::on_sendButton_clicked()
 {
     QString text = ui->lineEdit->text();
     QJsonObject obj;
-    obj.insert("cmd","private_chat");
-    obj.insert("user_from",userName);
-    obj.insert("user_to",friendName);
-    obj.insert("text",text);
+    obj.insert("cmd", "private_chat");
+    obj.insert("user_from", userName);
+    obj.insert("user_to", friendName);
+    obj.insert("text", text);
     QByteArray ba = QJsonDocument(obj).toJson();
     socket->write(ba);
 
@@ -56,13 +56,8 @@ void PrivateChat::closeEvent(QCloseEvent *event) {
             break;
         }
     }
-    //event->accept();//确实关闭窗口
+    event->accept();//确实关闭窗口
 }
-
-/*void PrivateChat::on_pushButton_2_clicked()
-{
-
-}*/
 
 void PrivateChat::on_fileButton_clicked()
 {
