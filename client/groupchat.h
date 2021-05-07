@@ -27,9 +27,7 @@ public:
 private slots:
     void show_group_member(QJsonObject);
     void show_group_text(QJsonObject);
-
     void on_sendButton_clicked();
-
     void on_fileButton_clicked();
 
 private:
@@ -39,7 +37,6 @@ private:
     QString groupName;
     Chatlist * mainWidget;
     QList <groupWidgetInfo>* groupWidgetList;
-
 };
 
 #endif // GROUPCHAT_H

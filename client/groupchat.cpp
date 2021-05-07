@@ -75,8 +75,7 @@ void GroupChat::closeEvent(QCloseEvent *event) {
             groupWidgetList->removeAt(i);
         }
     }
-    //event->accept();//接受这个操作
-
+    event->accept(); // 接受这个操作
 }
 
 void GroupChat::on_fileButton_clicked()

@@ -37,12 +37,12 @@ void PrivateChat::on_sendButton_clicked()
 }
 
 void PrivateChat::show_text_slot(QJsonObject obj) {
-    if (obj.value("cmd").toString() == "private_chat") {
+    if (obj.value("cmd").toString() == "private_chat_recv") {
         if (obj.value("user_from").toString() == friendName) {
             if (this->isMinimized()) {
                this->showNormal();
             }
-            this->activateWindow();//显示在最上面
+            this->activateWindow(); // 显示在最上面
             ui->textEdit->append(obj.value("text").toString());
             ui->textEdit->append("\n");
         }

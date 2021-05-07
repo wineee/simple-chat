@@ -16,11 +16,8 @@ public:
     RecvThread(QJsonObject obj);
     void run();   //子线程SS
 
-
-
 private slots:
     void recv_file();   //父线程
-
 
 private:
     QString fileName;

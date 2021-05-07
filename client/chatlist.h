@@ -3,23 +3,23 @@
 
 #include <QWidget>
 #include <QTcpSocket>
-#include<QJsonDocument>
-#include<QJsonObject>
-#include<QMessageBox>
-#include"addfriend.h"
-#include"creategroup.h"
-#include"addgroup.h"
-class PrivateChat;//声明，QT里面支持互相包含，只要互相声明即可
-#include"privatechat.h"
-#include<QList>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QMessageBox>
+#include <QList>
+#include <QCloseEvent>
 
+#include "addfriend.h"
+#include "creategroup.h"
+#include "addgroup.h"
+#include "privatechat.h"
+#include "groupchat.h"
+
+#include "sendthread.h"
+#include "recvthread.h"
+
+class PrivateChat;
 class GroupChat;
-#include"groupchat.h"
-
-#include"sendthread.h"
-#include"recvthread.h"
-
-
 
 namespace Ui {
 class Chatlist;
@@ -38,9 +38,6 @@ struct groupWidgetInfo
 
 };
 
-
-
-
 class Chatlist : public QWidget
 {
     Q_OBJECT
@@ -52,15 +49,10 @@ public:
 
 private slots:
     void server_reply();
-
     void on_createGroupButton_clicked();
-
     void on_addButton_clicked();
-
     void on_addGroupButton_clicked();
-
     void on_frientList_double_clicked();
-
     void on_groupList_double_clicked();
 
 signals:

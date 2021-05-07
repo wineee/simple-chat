@@ -7,7 +7,7 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
     socket = new QTcpSocket;
-    socket->connectToHost(QHostAddress("39.108.144.134"), 8000);//ip地址和端口号
+    socket->connectToHost(QHostAddress("39.108.144.134"), 8000); // ip地址和端口号
 
     connect(socket, &QTcpSocket::connected, this, &Widget::connect_success);
     connect(socket, &QTcpSocket::readyRead, this, &Widget::server_reply);
@@ -20,7 +20,7 @@ Widget::~Widget()
 
 void Widget::connect_success()
 {
-    QMessageBox::information(this,"链接提示","链接服务器成功");
+    QMessageBox::information(this, "链接提示", "链接服务器成功");
 }
 
 // 完成注册功能
@@ -38,8 +38,9 @@ void Widget::on_registerButton_clicked()
     socket->write(ba);
 }
 
-void Widget::server_reply() {  //服务器的回复
-    //socket对象有数据可读的时候出发槽函数
+// 服务器的回复
+void Widget::server_reply() {
+    // socket对象有数据可读的时候出发槽函数
     QByteArray ba = socket->readAll();
     QJsonObject obj = QJsonDocument::fromJson(ba).object();
 
@@ -78,7 +79,6 @@ void Widget::on_loginButton_clicked() {
 
     QByteArray ba = QJsonDocument(obj).toJson();
     socket->write(ba);
-
 }
 
 void Widget::client_login_handler(QString res,QString fri,QString group)
@@ -91,38 +91,10 @@ void Widget::client_login_handler(QString res,QString fri,QString group)
         //跳到登录成功的界面
         this->hide();
         socket->disconnect(SIGNAL(readyRead()));
-        Chatlist * c = new Chatlist(socket,fri,group,userName);
+        Chatlist * c = new Chatlist(socket, fri, group, userName);
         c->setWindowTitle(userName);
         c->show();
     } else {
         QMessageBox::warning(this,"登录错误",res);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

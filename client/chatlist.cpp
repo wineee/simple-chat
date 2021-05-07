@@ -10,8 +10,8 @@ Chatlist::Chatlist(QTcpSocket *s, QString fri, QString group, QString u, QWidget
     userName = u;
     connect(socket, &QTcpSocket::readyRead, this, &Chatlist::server_reply);
 
-    //初始化好友列表和群列表
-    QStringList friList = fri.split('|');//根据|去解析
+    // 初始化好友列表和群列表
+    QStringList friList = fri.split('|'); // 根据|去解析
     for (int i = 0; i < friList.size(); i++) {
         if (friList.at(i) != "") {
             ui->friendList->addItem(friList.at(i));
@@ -20,7 +20,7 @@ Chatlist::Chatlist(QTcpSocket *s, QString fri, QString group, QString u, QWidget
 
     QStringList groList = group.split('|');
     for (int i = 0; i < groList.size(); i++) {
-        if (groList.at(i)!="") {
+        if (groList.at(i) != "") {
             ui->groupList->addItem(groList.at(i));
         }
     }
@@ -53,7 +53,7 @@ void Chatlist::server_reply() {
         client_add_group_reply(obj);
     }else if(cmd == "private_chat_reply") {
         client_private_chat_reply(obj.value("result").toString());
-    }else if(cmd == "private_chat") {
+    }else if(cmd == "private_chat_recv") {
         client_chat_reply(obj);
     }else if(cmd == "get_group_member_reply") {
         client_get_group_member_reply(obj);
@@ -72,16 +72,15 @@ void Chatlist::server_reply() {
 
 void Chatlist::client_login_reply(QString fri) {
     QString str = QString("&1好友上线").arg(fri);
-    //QMessageBox:information(this,"好友上线提醒",str);
-    QMessageBox::information(this,"好友上线提醒","您的好友已上线");
+    QMessageBox::information(this,"好友上线提醒",str);
 }
 
 void Chatlist::client_add_friend_reply(QJsonObject & obj){
-    if(obj.value("result").toString()=="user_not_exist"){
+    if(obj.value("result").toString() == "user_not_exist") {
         QMessageBox::warning(this,"添加好友提醒","好友不存在");
-    }else if(obj.value("result").toString()=="already_friend"){
+    } else if (obj.value("result").toString() == "already_friend") {
         QMessageBox::warning(this,"添加好友提醒","已经是好友");
-    }else if(obj.value("result").toString() =="success"){
+    } else if (obj.value("result").toString() == "success") {
         QMessageBox::warning(this,"添加好友提醒","好友添加成功");
         ui->friendList->addItem(obj.value("friend").toString());
     }
@@ -108,50 +107,48 @@ void Chatlist::client_add_group_reply(QJsonObject &obj) {
 }
 
 void Chatlist::client_private_chat_reply(QString res) {
-    if (res=="offline"){
-        QMessageBox::warning(this,"发送提醒","对方不在线");
+    if (res == "offline") {
+        QMessageBox::warning(this, "发送提醒", "对方不在线");
     }
 }
 
 void Chatlist::client_chat_reply(QJsonObject &obj) {
-    //当收到消息时，自动跳出一个窗口或者已经打开了
-    //看一下是谁发来的，先判断一下这个窗口有没有被打开
+    // 当收到消息时，自动跳出一个窗口或者已经打开了
+    // 看一下是谁发来的，先判断一下这个窗口有没有被打开
     int flag = 0;
-    for(int i = 0; i < chatWidgetList.size(); i++) {
-        if(chatWidgetList.at(i).name == obj.value("user_from").toString()) {
+    for (int i = 0; i < chatWidgetList.size(); i++) {
+        if (chatWidgetList.at(i).name == obj.value("user_from").toString()) {
             flag = 1;
             break;
         }
     }
-    if(flag == 0) {//聊天窗口没有打开
+    if (flag == 0) { // 聊天窗口没有打开
         QString friendName = obj.value("user_from").toString();
-        PrivateChat * privateChatWidget = new PrivateChat(socket,userName,friendName,this,&chatWidgetList);   //需要对应该一下构造函数
+        PrivateChat *privateChatWidget = new PrivateChat(socket, userName, friendName, this, &chatWidgetList);   //需要对应该一下构造函数
         privateChatWidget->setWindowTitle(friendName);
         privateChatWidget->show();
-
-        ChatWidgetInfo c = {privateChatWidget,friendName};
+        ChatWidgetInfo c = {privateChatWidget, friendName};
         chatWidgetList.push_back(c);
     }
     //emit signal_to_sub_widget(obj.value("text").toString());        //发送信号
-    emit signal_to_sub_widget(obj);        //发送信号
-
+    emit signal_to_sub_widget(obj);
 }
 
-void Chatlist::client_get_group_member_reply(QJsonObject obj){
+void Chatlist::client_get_group_member_reply(QJsonObject obj) {
     emit signal_to_sub_widget_member(obj);
 }
 
-void Chatlist::client_group_chat_reply(QJsonObject obj){
+void Chatlist::client_group_chat_reply(QJsonObject obj) {
     int flag = 0;
-    for(int i=0;i<groupWidgetList.size();i++){
-        if(groupWidgetList.at(i).name == obj.value("group").toString()){
+    for (int i = 0;i < groupWidgetList.size(); i++) {
+        if (groupWidgetList.at(i).name == obj.value("group").toString()) {
             flag = 1;
             break;
         }
     }
-    if(flag ==0) {
+    if(flag == 0) {
         QString groupName = obj.value("group").toString();
-        GroupChat * groupChatWidget = new GroupChat(socket,groupName,userName,this,& groupWidgetList);
+        GroupChat *groupChatWidget = new GroupChat(socket, groupName, userName, this, &groupWidgetList);
         groupChatWidget->setWindowTitle(groupName);
         groupChatWidget->show();
         groupWidgetInfo g = {groupChatWidget,groupName};
@@ -170,7 +167,7 @@ void Chatlist::client_send_file_reply(QString res){
 
 void Chatlist::client_send_file_port_reply(QJsonObject obj) {
     //启动线程，自己封装一个类
-    SendThread * mySendthread = new SendThread(obj);
+    SendThread *mySendthread = new SendThread(obj);
     mySendthread->start();
 }
 
@@ -194,13 +191,10 @@ void Chatlist::on_createGroupButton_clicked() {
     createGroupWidget->show();
 }
 
-
-
 void Chatlist::on_addGroupButton_clicked()
 {
     AddGroup * addGroupWidget =new AddGroup(socket,userName);
     addGroupWidget->show();
-
 }
 
 void Chatlist::on_frientList_double_clicked()
@@ -225,9 +219,6 @@ void Chatlist::on_groupList_double_clicked()
 
     groupWidgetInfo g = {groupChatWidget,groupName};
     groupWidgetList.push_back(g);
-
-
-
 }
 
 void Chatlist::closeEvent(QCloseEvent *event){
@@ -239,7 +230,7 @@ void Chatlist::closeEvent(QCloseEvent *event){
     socket->write(ba);
     socket->flush();
     //刷新socket缓冲区
-    //event->accept();
+    event->accept();
 }
 
 
