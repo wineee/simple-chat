@@ -20,11 +20,11 @@ ChatInfo::ChatInfo() {
     if (member.size() == 0) {
       continue;
     }
-    string::size_type start = 0, end = 0;
+    string::size_type start = 1, end = 1;
     while(start < member.size()) {
       end = member.find('|', start);
       if (end == string::npos) {
-	end = member.size();
+	      end = member.size();
       }
       cout << start <<" "<< end << " " << member.substr(start, end-start) << "\n";
       g.l->push_back(GroupUser{member.substr(start, end-start)});

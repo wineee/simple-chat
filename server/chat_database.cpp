@@ -162,7 +162,6 @@ void ChatDataBase::my_database_add_new_friend(string name, string fri) {
   if (mysql_query(mysql, sql.c_str()) != 0) {
     cout << "mysql query error in my_database_add_new_friend(update)" << endl;
   }
-  
 }
 
 bool ChatDataBase::my_database_group_exist(string group_name) {
@@ -217,11 +216,10 @@ void ChatDataBase::my_database_user_add_group(string user_name, string group_nam
   
 }
 
-
 void ChatDataBase::my_database_group_add_user(string group_name, string user_name) {
   string sql = "select member from " + group_name;
   if (mysql_query(mysql, sql.c_str())) {
-    cout << "mysql query erreor" << endl;
+    cout << "mysql query error" << endl;
   }
 
   MYSQL_RES *res = mysql_store_result(mysql);
@@ -229,13 +227,13 @@ void ChatDataBase::my_database_group_add_user(string group_name, string user_nam
   string all_member;
   if (row[0] != nullptr) {
     all_member += row[0];
-    all_member += "|" + user_name;
+    all_member += user_name + "|";
   } else {
-    all_member = user_name;
+    all_member = "|" + user_name + "|";
   }
 
   sql = "update " + group_name + " set member = '" + all_member + "'";
   if (mysql_query(mysql, sql.c_str())) {
-    cout << "mysql query error" << endl;
+    cout << "mysql query error in group_add_user" << endl;
   }
 }
