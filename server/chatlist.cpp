@@ -54,9 +54,9 @@ bool ChatInfo::info_user_in_group(string group_name, string user_name) {
    for (auto it = group_info->begin(); it != group_info->end(); it++) {
     if (it->name == group_name) {
       for (auto uit = it->l->begin(); uit != it->l->end(); uit++) {
-	if (uit->name == user_name) {
-	  return true;
-	}
+	      if (uit->name == user_name) {
+	        return true;
+	      }
       }
     }
   }
@@ -83,9 +83,9 @@ struct bufferevent *ChatInfo::info_get_friend_bev(string name) {
 string ChatInfo::info_get_group_member(string group_name) {
   for (auto it = group_info->begin(); it != group_info->end(); it++) {
     if (it->name == group_name) {
-      string member_list;
+      string member_list = "|";
       for (auto i = it->l->begin(); i != it->l->end(); i++) {
-	member_list += i->name + "|";
+	      member_list += i->name + "|";
       }
       return member_list;
     }

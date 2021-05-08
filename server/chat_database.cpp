@@ -185,9 +185,8 @@ void ChatDataBase::my_database_add_new_group(string group_name, string user_name
     cout << "mysql query error in my_database_add_new_group(create)" << endl;
   }
 
-  sql = "insert into " + group_name + " values ('" + user_name + "','"+ user_name +"|')";
+  sql = "insert into " + group_name + " values ('" + user_name + "','|"+ user_name +"|')";
 
-  
   if (mysql_query(mysql, sql.c_str())) {
     cout << "mysql query error my_database_add_new_group(set)" << endl;
   }

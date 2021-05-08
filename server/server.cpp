@@ -163,8 +163,8 @@ void Server::server_login(struct bufferevent *bev, Json::Value val) {
     string fri_list = chatdb->my_database_get_friend(val["user"].asString());
     string group_list = chatdb->my_database_get_group(val["user"].asString());
     returnVal["cmd"] = "login_reply";
-    returnVal["result"]="success";
-    returnVal["friend"]=fri_list;
+    returnVal["result"] = "success";
+    returnVal["friend"] = fri_list;
     returnVal["group"] = group_list;
     string b = Json::writeString(wbuilder, returnVal);
     if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
@@ -172,8 +172,26 @@ void Server::server_login(struct bufferevent *bev, Json::Value val) {
     }
 
     // 向好友发送上线通知
-    //;; todo
-    //cout << " ok " << endl;
+    returnVal.clear();
+    returnVal["cmd"] = "login_reply";
+    returnVal["result"] = val["user"];
+    b = Json::writeString(wbuilder, returnVal);
+    string::size_type start = 1, end = 1;
+    while (start < fri_list.size()) {
+      end = fri_list.find('|', start);
+      if (end == string::npos) 
+        break;
+      string fri = fri_list.substr(start, end-start);
+      //cout << start << " " << end << " " << fri << " hhh\n"; 
+      struct bufferevent *to_bev = chatlist->info_get_friend_bev(fri);
+      if (to_bev != nullptr) {
+      //cout << b;
+        if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
+	       cout << "bufferevent write error" << endl;
+        }
+      }
+      start = end+1;
+    }
   }
 
   chatdb->my_database_disconnect();
@@ -257,6 +275,7 @@ void Server::event_cb(struct bufferevent *bev, short what, void *ctx) {
 void Server::server_create_group(struct bufferevent *bev, Json::Value val) {
   Json::Value returnVal;
   Json::StreamWriterBuilder wbuilder;
+  chatdb->my_database_connect("chatgroup");
   if (chatdb->my_database_group_exist(val["group"].asString())) {
     returnVal["cmd"] = "create_group_reply";
     returnVal["result"] = "group_exist";
@@ -266,7 +285,6 @@ void Server::server_create_group(struct bufferevent *bev, Json::Value val) {
     }
   }
   else {
-    chatdb->my_database_connect("chatgroup");
     // 修改数据库个人信息
     chatdb->my_database_add_new_group(val["group"].asString(), val["user"].asString());
     chatdb->my_database_disconnect();
@@ -274,7 +292,6 @@ void Server::server_create_group(struct bufferevent *bev, Json::Value val) {
     chatdb->my_database_connect("user");
     chatdb->my_database_user_add_group(val["user"].asString(), val["group"].asString());
     //服务器端有一个群列表，修改群列表
-    chatdb->my_database_disconnect();
 
     chatlist->info_add_new_group(val["group"].asString(),val["user"].asString());
 
@@ -287,6 +304,7 @@ void Server::server_create_group(struct bufferevent *bev, Json::Value val) {
       cout << "bufferevent write error" << endl;
     }
   }
+  chatdb->my_database_disconnect();
 }
 
 
@@ -316,7 +334,6 @@ void Server::server_add_group(struct bufferevent *bev, Json::Value val) {
     // 修改数据库（用户表 群表）
     chatdb->my_database_user_add_group(val["user"].asString(), val["group"].asString());
     chatdb->my_database_disconnect();
-return;
     chatdb->my_database_connect("chatgroup");
     chatdb->my_database_group_add_user(val["group"].asString(), val["user"].asString());
     // 修改链表
@@ -391,12 +408,13 @@ void Server::server_group_chat(struct bufferevent *bev, Json::Value val) {
   for (auto it = chatlist->group_info->begin(); it != chatlist->group_info->end(); it++) {
     if (val["group"].asString() == it->name) {
       for (auto member = it->l->begin(); member != it->l->end(); member++) {
-	struct bufferevent *to_bev = chatlist->info_get_friend_bev(member->name);
-	if (bev != nullptr) {
-	  if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
-	    cout << "bufferevent write error" << endl;
-	  }
-	}
+        cout << member->name << " m \n";
+	      struct bufferevent *to_bev = chatlist->info_get_friend_bev(member->name);
+	      if (bev != nullptr) {
+	        if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
+	          cout << "bufferevent write error" << endl;
+	        }
+	      }
       }
     }
   }
@@ -422,6 +440,7 @@ void Server::server_get_group_member(struct bufferevent *bev, Json::Value val) {
   Json::StreamWriterBuilder wbuilder;
   returnVal["cmd"] = "get_group_member_reply";
   returnVal["member"] = member;
+  returnVal["group"] = val["group"];
   string b = Json::writeString(wbuilder, returnVal);
   if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
     cout << "bufferevent write error" << endl;
