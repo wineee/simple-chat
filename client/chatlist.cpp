@@ -1,3 +1,4 @@
+
 #include "chatlist.h"
 #include "ui_chatlist.h"
 
@@ -57,7 +58,7 @@ void Chatlist::server_reply() {
         client_chat_reply(obj);
     }else if(cmd == "get_group_member_reply") {
         client_get_group_member_reply(obj);
-    }else if(cmd == "group_chat") {
+    }else if(cmd == "group_chat_reply") {
         client_group_chat_reply(obj);
     }else if(cmd == "friend_offline") {
         client_friend_offline(obj.value("friend").toString());
