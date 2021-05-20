@@ -50,7 +50,7 @@ void Widget::server_reply() {
     } else if (cmd == "login_reply") {
         //client_login_handler(obj.value("result").toString(),obj.value("friend").toString(),obj.value("Group").toString());
         QString str = obj.value("group").toString();
-        QMessageBox::warning(this,"群列表里面的东西显示一下",str);    //这个地方是空的，不知道为什么啊
+       // QMessageBox::warning(this,"群列表里面的东西显示一下",str);
 
         client_login_handler(obj.value("result").toString(),obj.value("friend").toString(),obj.value("group").toString());
         //QString str = QString(obj.value("group").toString());

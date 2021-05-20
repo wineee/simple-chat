@@ -23,7 +23,6 @@ void SendThread::run() {
                   break;
               sendSocket.write(ba);
               sendSocket.flush(); //立马发过去
-
         }
         file.close();
         sendSocket.close();

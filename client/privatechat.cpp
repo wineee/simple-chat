@@ -12,6 +12,8 @@ PrivateChat::PrivateChat(QTcpSocket *s, QString u, QString f, Chatlist *c, QList
     mainWidget = c;
     chatWidgetList = l;
 
+    ui->fileButton->setVisible(false);
+
     connect(mainWidget, &Chatlist::signal_to_sub_widget, this, &PrivateChat::show_text_slot);
 }
 
@@ -32,6 +34,8 @@ void PrivateChat::on_sendButton_clicked()
     socket->write(ba);
 
     ui->lineEdit->clear();
+    ui->textEdit->append(userName+":");
+    ui->textEdit->append("\n");
     ui->textEdit->append(text);
     ui->textEdit->append("\n");
 }
@@ -43,6 +47,9 @@ void PrivateChat::show_text_slot(QJsonObject obj) {
                this->showNormal();
             }
             this->activateWindow(); // 显示在最上面
+
+            ui->textEdit->append(friendName+":");
+            ui->textEdit->append("\n");
             ui->textEdit->append(obj.value("text").toString());
             ui->textEdit->append("\n");
         }

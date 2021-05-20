@@ -72,7 +72,7 @@ void Chatlist::server_reply() {
 }
 
 void Chatlist::client_login_reply(QString fri) {
-    QString str = QString("&1好友上线").arg(fri);
+    QString str = QString("%1好友上线").arg(fri);
     QMessageBox::information(this,"好友上线提醒",str);
 }
 
@@ -233,19 +233,3 @@ void Chatlist::closeEvent(QCloseEvent *event){
     //刷新socket缓冲区
     event->accept();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

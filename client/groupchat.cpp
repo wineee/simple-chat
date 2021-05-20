@@ -51,6 +51,8 @@ void GroupChat::on_sendButton_clicked() {
     socket->write(ba);
 
     ui->lineEdit->clear();
+    ui->textEdit->append(userName+":");
+    ui->textEdit->append("\n");
     ui->textEdit->append(text);
     ui->textEdit->append("\n");
 }
@@ -58,11 +60,13 @@ void GroupChat::on_sendButton_clicked() {
 void GroupChat::show_group_text(QJsonObject obj){
     //有可能同时打开多个群聊窗口，收到但是不用都显示
     if (obj.value("cmd").toString() == "group_chat_reply") {
-        if (obj.value("group").toString()==groupName) {
+        if (obj.value("group").toString() == groupName) {
             if (this->isMinimized()) {
                 this->showNormal();
             }
             this->activateWindow();
+            ui->textEdit->append(obj.value("user").toString()+":");
+            ui->textEdit->append("\n");
             ui->textEdit->append(obj.value("text").toString());
             ui->textEdit->append("\n");
         }
