@@ -6,8 +6,6 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-//群的课程的前几节几乎都有修改服务器内容，注意一下
-
 namespace Ui {
 class Addfriend;
 }
