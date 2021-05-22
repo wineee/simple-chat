@@ -10,9 +10,9 @@ select chatgroup from `LiMin`
 
 --- 创建交流群
 use chatgroup;
-create table 交流群1 (owner varchar(32), member varchar(2048)) char set utf8；
-insert into 交流群1 values("Alice", "|Alice|Bob|LiMing|");
+create table 交流群1 (owner varchar(32), member varchar(2048))；
+insert into 交流群1 values("Alice", "|Alice|");
 
 --- 添加好友
 select friend from Li
-update Li set friend = 'Ma|wine|'
+update Li set friend = '|Ma|wine|'
