@@ -1,5 +1,5 @@
 #include "server.h"
-
+//g++ *.cpp -o main -std=c++11 -levent -lpthread -lmysqlclient -ljsoncpp
 ChatDataBase *Server::chatdb = new ChatDataBase;
 ChatInfo *Server::chatlist = new ChatInfo;
 
@@ -129,7 +129,7 @@ void Server::server_register(struct bufferevent *bev, Json::Value val) {
    失败返回： {"cmd":"login_reply", "result":"user_not_exist"};
    失败返回： {"cmd":"login_reply", "result":"passwd_error"};
    成功返回： {“cmd”:"login_reply", "result":"好友列表"" "group":"群列表"};
-   成功返回： {“cmd”:"login_reply", "result":fri}
+   成功返回： {“cmd”:"friend_reply", "friend":fri}
 */
 void Server::server_login(struct bufferevent *bev, Json::Value val) {
   chatdb->my_database_connect("user");
@@ -173,8 +173,8 @@ void Server::server_login(struct bufferevent *bev, Json::Value val) {
 
     // 向好友发送上线通知
     returnVal.clear();
-    returnVal["cmd"] = "login_reply";
-    returnVal["result"] = val["user"];
+    returnVal["cmd"] = "friend_login";
+    returnVal["friend"] = val["user"];
     b = Json::writeString(wbuilder, returnVal);
     string::size_type start = 1, end = 1;
     while (start < fri_list.size()) {
@@ -185,10 +185,10 @@ void Server::server_login(struct bufferevent *bev, Json::Value val) {
       //cout << start << " " << end << " " << fri << " hhh\n"; 
       struct bufferevent *to_bev = chatlist->info_get_friend_bev(fri);
       if (to_bev != nullptr) {
-      //cout << b;
-        if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
-	       cout << "bufferevent write error" << endl;
-        }
+         cout << fri << " ff \n";
+         if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
+	         cout << "bufferevent write error" << endl;
+         }
       }
       start = end+1;
     }
@@ -410,7 +410,7 @@ void Server::server_group_chat(struct bufferevent *bev, Json::Value val) {
       for (auto member = it->l->begin(); member != it->l->end(); member++) {
         cout << member->name << " m \n";
 	      struct bufferevent *to_bev = chatlist->info_get_friend_bev(member->name);
-	      if (bev != nullptr) {
+	      if (to_bev != nullptr) {
 	        if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
 	          cout << "bufferevent write error" << endl;
 	        }
