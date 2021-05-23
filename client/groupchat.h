@@ -2,10 +2,10 @@
 #define GROUPCHAT_H
 
 #include <QWidget>
-#include<QTcpSocket>
-#include<QJsonObject>
-#include<QJsonDocument>
-#include<QList>
+#include <QTcpSocket>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QList>
 class Chatlist;//声明互相包含
 #include"chatlist.h"
 struct groupWidgetInfo;

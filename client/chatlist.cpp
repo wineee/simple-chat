@@ -1,4 +1,3 @@
-
 #include "chatlist.h"
 #include "ui_chatlist.h"
 

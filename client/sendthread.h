@@ -1,12 +1,12 @@
 #ifndef SENDTHREAD_H
 #define SENDTHREAD_H
 
-#include<QJsonObject>
-#include<QJsonDocument>
-#include<QTcpSocket>
-#include<QHostAddress>
-#include<QThread>
-#include<QFile>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QTcpSocket>
+#include <QHostAddress>
+#include <QThread>
+#include <QFile>
 
 class SendThread : public QThread
 {

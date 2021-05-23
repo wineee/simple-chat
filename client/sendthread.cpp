@@ -18,7 +18,7 @@ void SendThread::run() {
         QFile file(fileName);
         file.open(QIODevice::ReadOnly);   //fielNAme是个路径
         while(true) {
-              QByteArray  ba = file.read(1024);//1024个字节
+              QByteArray  ba = file.read(1024); //1024个字节
               if(ba.size() == 0)
                   break;
               sendSocket.write(ba);

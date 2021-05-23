@@ -1,11 +1,11 @@
 #ifndef RECVTHREAD_H
 #define RECVTHREAD_H
-#include<QThread>
-#include<QJsonObject>
-#include<QJsonDocument>
-#include<QTcpSocket>
-#include<QHostAddress>
-#include<QFile>
+#include <QThread>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QTcpSocket>
+#include <QHostAddress>
+#include <QFile>
 
 
 
