@@ -23,25 +23,22 @@ class PrivateChat : public QWidget
 {
     Q_OBJECT
 public:
-    explicit PrivateChat(QTcpSocket * s,QString u,QString f,Chatlist * c,QList<ChatWidgetInfo>* l,QWidget *parent = 0);
+    explicit PrivateChat(QTcpSocket *s, QString u, QString f, Chatlist *c, QList<ChatWidgetInfo> *l, QWidget *parent = 0);
     ~PrivateChat();
-    void closeEvent(QCloseEvent * event);
+    void closeEvent(QCloseEvent *event);
 
 private slots:
     void on_sendButton_clicked();
     void show_text_slot(QJsonObject);
-
-    //void on_pushButton_2_clicked();
-
     void on_fileButton_clicked();
 
 private:
     Ui::PrivateChat *ui;
-    QTcpSocket * socket;
+    QTcpSocket *socket;
     QString userName;
     QString friendName;
-    Chatlist * mainWidget;
-    QList<ChatWidgetInfo> * chatWidgetList;
+    Chatlist *mainWidget;
+    QList<ChatWidgetInfo> *chatWidgetList;
 
 };
 

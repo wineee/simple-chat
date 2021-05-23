@@ -14,7 +14,7 @@ class RecvThread : public QThread
     Q_OBJECT
 public:
     RecvThread(QJsonObject obj);
-    void run();   //子线程SS
+    void run();   //子线程
 
 private slots:
     void recv_file();   //父线程
@@ -24,8 +24,8 @@ private:
     int fileLength;
     int total;
     int port;
-    QTcpSocket * recvSocket;
-    QFile * file;
+    QTcpSocket *recvSocket;
+    QFile *file;
 };
 
 #endif // RECVTHREAD_H

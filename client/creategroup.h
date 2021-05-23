@@ -2,9 +2,9 @@
 #define CREATEGROUP_H
 
 #include <QWidget>
-#include<QTcpSocket>
-#include<QJsonDocument>
-#include<QJsonObject>
+#include <QTcpSocket>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 namespace Ui {
 class CreateGroup;
@@ -20,7 +20,6 @@ public:
 
 private slots:
     void on_cancelButton_clicked();
-
     void on_createButton_clicked();
 
 private:

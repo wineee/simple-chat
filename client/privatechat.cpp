@@ -22,8 +22,7 @@ PrivateChat::~PrivateChat()
     delete ui;
 }
 
-void PrivateChat::on_sendButton_clicked()
-{
+void PrivateChat::on_sendButton_clicked() {
     QString text = ui->lineEdit->text();
     QJsonObject obj;
     obj.insert("cmd", "private_chat");
@@ -68,18 +67,18 @@ void PrivateChat::closeEvent(QCloseEvent *event) {
 
 void PrivateChat::on_fileButton_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,"发送文件",QCoreApplication::applicationFilePath());
-    if(fileName.isEmpty()){
+    QString fileName = QFileDialog::getOpenFileName(this, "发送文件", QCoreApplication::applicationFilePath());
+    if(fileName.isEmpty()) {
         QMessageBox::warning(this,"发送文件提示","请选择一个文件");
-    }else{
+    } else {
         QFile file(fileName);
         file.open(QIODevice::ReadOnly);
         QJsonObject obj;
-        obj.insert("cmd","send_file");
-        obj.insert("from_user",userName);
-        obj.insert("to_user",friendName);
-        obj.insert("length",file.size());
-        obj.insert("filename",fileName);
+        obj.insert("cmd", "send_file");
+        obj.insert("from_user", userName);
+        obj.insert("to_user", friendName);
+        obj.insert("length", file.size());
+        obj.insert("filename", fileName);
         QByteArray ba = QJsonDocument(obj).toJson();
         socket->write(ba);
     }

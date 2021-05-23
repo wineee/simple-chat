@@ -24,9 +24,9 @@ void CreateGroup::on_createButton_clicked()
 {
     QString groupName = ui->lineEdit->text();
     QJsonObject obj ;
-    obj.insert("cmd","create_group");
-    obj.insert("user",userName);
-    obj.insert("group",groupName);
+    obj.insert("cmd", "create_group");
+    obj.insert("user", userName);
+    obj.insert("group", groupName);
     QByteArray ba = QJsonDocument(obj).toJson();
     socket->write(ba);
     this->close();

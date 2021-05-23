@@ -35,7 +35,6 @@ struct groupWidgetInfo
 {
     GroupChat * w;
     QString name;
-
 };
 
 class Chatlist : public QWidget
@@ -43,8 +42,8 @@ class Chatlist : public QWidget
     Q_OBJECT
 
 public:
-    explicit Chatlist(QTcpSocket *,QString,QString,QString,QWidget *parent = 0);
-    void closeEvent(QCloseEvent * event);
+    explicit Chatlist(QTcpSocket *, QString, QString, QString, QWidget *parent = 0);
+    void closeEvent(QCloseEvent *event);
     ~Chatlist();
 
 private slots:
@@ -75,12 +74,10 @@ private:
     void client_recv_file_port_reply(QJsonObject);
 
     Ui::Chatlist *ui;
-    QTcpSocket * socket;
+    QTcpSocket *socket;
     QString userName;
-    QList <ChatWidgetInfo> chatWidgetList;
-    QList <groupWidgetInfo> groupWidgetList;
-
-    //窗口对象指针
+    QList<ChatWidgetInfo> chatWidgetList;
+    QList<groupWidgetInfo> groupWidgetList;
 };
 
 #endif // CHATLIST_H

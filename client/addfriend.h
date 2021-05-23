@@ -15,7 +15,7 @@ class Addfriend : public QWidget
     Q_OBJECT
 
 public:
-    explicit Addfriend(QTcpSocket *s,QString u,QWidget *parent = 0);
+    explicit Addfriend(QTcpSocket *s, QString u, QWidget *parent = 0);
     ~Addfriend();
 
 private slots:

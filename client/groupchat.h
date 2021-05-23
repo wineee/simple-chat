@@ -19,10 +19,10 @@ class GroupChat : public QWidget
     Q_OBJECT
 
 public:
-    explicit GroupChat(QTcpSocket * s,QString g,QString u,Chatlist * c,QList<groupWidgetInfo>* l,QWidget *parent = 0);
+    explicit GroupChat(QTcpSocket *s, QString g, QString u, Chatlist *c, QList<groupWidgetInfo> *l, QWidget *parent = 0);
     ~GroupChat();
 
-    void closeEvent(QCloseEvent * event);
+    void closeEvent(QCloseEvent *event);
 
 private slots:
     void show_group_member(QJsonObject);
@@ -32,11 +32,11 @@ private slots:
 
 private:
     Ui::GroupChat *ui;
-    QTcpSocket * socket;
+    QTcpSocket *socket;
     QString userName;
     QString groupName;
-    Chatlist * mainWidget;
-    QList <groupWidgetInfo>* groupWidgetList;
+    Chatlist *mainWidget;
+    QList<groupWidgetInfo> *groupWidgetList;
 };
 
 #endif // GROUPCHAT_H

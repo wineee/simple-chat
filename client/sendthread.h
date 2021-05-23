@@ -18,7 +18,6 @@ private:
     QString fileName;
     int fileLength;
     int port;
-
 };
 
 #endif // SENDTHREAD_H

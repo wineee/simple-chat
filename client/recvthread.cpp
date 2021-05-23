@@ -19,10 +19,9 @@ void RecvThread::run() {
 
     recvSocket = new QTcpSocket;
 
-    connect(recvSocket,&QTcpSocket::readyRead,this,&RecvThread::recv_file,Qt::DirectConnection);   //很中哟啊
-    //recvSocket->connectToHost(QHostAddress("47.101.128.140"),port);
-    recvSocket->connectToHost(QHostAddress("39.108.144.134"),port);
-    if(!recvSocket->waitForConnected(10000)){
+    connect(recvSocket, &QTcpSocket::readyRead, this, &RecvThread::recv_file, Qt::DirectConnection);   //很中哟啊
+    recvSocket->connectToHost(QHostAddress("39.108.144.134"), port);
+    if(!recvSocket->waitForConnected(10000)) {
         this->quit();
     }else{
 
@@ -35,7 +34,7 @@ void RecvThread::recv_file() {
     total += ba.size();
     file->write(ba);
 
-    if(total>=fileLength){
+    if(total>=fileLength) {
         file->close();
         recvSocket->close();
         delete file;

@@ -13,8 +13,8 @@ GroupChat::GroupChat(QTcpSocket *s, QString g, QString u, Chatlist *c, QList<gro
     groupWidgetList = l;
 
     QJsonObject obj;
-    obj.insert("cmd","get_group_member");
-    obj.insert("group",groupName);
+    obj.insert("cmd", "get_group_member");
+    obj.insert("group", groupName);
     QByteArray ba = QJsonDocument(obj).toJson();
     socket->write(ba);
 
@@ -27,10 +27,10 @@ GroupChat::~GroupChat()
     delete ui;
 }
 
-void GroupChat::show_group_member(QJsonObject obj){
+void GroupChat::show_group_member(QJsonObject obj) {
     if (obj.value("cmd").toString() == "get_group_member_reply") {
-        if (obj.value("group").toString()==groupName){
-            //得到的是带有|的字符串
+        if (obj.value("group").toString() == groupName){
+            // 得到的是带有|的字符串
             QStringList strList = obj.value("member").toString().split("|");
             for (int i = 0; i < strList.size(); i++) {
                 ui->listWidget->addItem(strList.at(i));
@@ -42,10 +42,10 @@ void GroupChat::show_group_member(QJsonObject obj){
 void GroupChat::on_sendButton_clicked() {
     QString text = ui->lineEdit->text();
     QJsonObject obj;
-    obj.insert("cmd","group_chat");
-    obj.insert("user",userName);
-    obj.insert("group",groupName);
-    obj.insert("text",text);
+    obj.insert("cmd", "group_chat");
+    obj.insert("user", userName);
+    obj.insert("group", groupName);
+    obj.insert("text", text);
 
     QByteArray ba = QJsonDocument(obj).toJson();
     socket->write(ba);
@@ -57,7 +57,7 @@ void GroupChat::on_sendButton_clicked() {
     ui->textEdit->append("\n");
 }
 
-void GroupChat::show_group_text(QJsonObject obj){
+void GroupChat::show_group_text(QJsonObject obj) {
     //有可能同时打开多个群聊窗口，收到但是不用都显示
     if (obj.value("cmd").toString() == "group_chat_reply") {
         if (obj.value("group").toString() == groupName) {
@@ -74,12 +74,12 @@ void GroupChat::show_group_text(QJsonObject obj){
 }
 
 void GroupChat::closeEvent(QCloseEvent *event) {
-    for(int i=0;i<groupWidgetList->size();i++) {
-        if(groupWidgetList->at(i).name==groupName) {
+    for(int i=0; i < groupWidgetList->size(); i++) {
+        if(groupWidgetList->at(i).name == groupName) {
             groupWidgetList->removeAt(i);
         }
     }
-    event->accept(); // 接受这个操作
+    event->accept();
 }
 
 void GroupChat::on_fileButton_clicked()

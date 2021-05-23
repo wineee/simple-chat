@@ -30,7 +30,7 @@ private slots:
 
 private:
     void client_register_handler(QString);
-    void client_login_handler(QString,QString,QString);
+    void client_login_handler(QString, QString, QString);
     Ui::Widget *ui;
     QTcpSocket *socket;
     QString userName;
