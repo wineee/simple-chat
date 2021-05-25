@@ -11,6 +11,7 @@
 #include <QMouseEvent>
 #include <QMenu>
 #include <QSystemTrayIcon>
+#include <QMovie>
 
 #include "chatlist.h"
 #include "trayiconmenu.h"
@@ -31,13 +32,12 @@ public:
 private slots:
     void connect_success();
     void server_reply();
-    void on_registerButton_clicked();
-    void on_loginButton_clicked();
 
 private:
     void client_register_handler(QString);
     void client_login_handler(QString, QString, QString);
     Ui::Widget *ui;
+    Chatlist *pchatList;
     QTcpSocket *socket;
     QString userName;
 
@@ -54,11 +54,15 @@ private:
     QAction *m_pShowAction;
     QAction *m_pCloseAction;
 
+    bool isLogin;
+
 private slots:
     void showwidget();
     void closewidget();
     void on_toolButton_m_clicked();
-    void on_toolButton_2_clicked();
+    void on_toolButton_x_clicked();
+    void on_changeButton_clicked();
+    void on_LgRgButton_clicked();
 };
 
 #endif // WIDGET_H

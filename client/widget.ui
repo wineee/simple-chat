@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>591</width>
+    <width>590</width>
     <height>394</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>登录页面</string>
   </property>
-  <widget class="QPushButton" name="registerButton">
+  <widget class="QPushButton" name="changeButton">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -26,13 +26,13 @@
     <enum>Qt::DefaultContextMenu</enum>
    </property>
    <property name="text">
-    <string>注册</string>
+    <string>还没账号</string>
    </property>
    <property name="flat">
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="loginButton">
+  <widget class="QPushButton" name="LgRgButton">
    <property name="geometry">
     <rect>
      <x>170</x>
@@ -42,19 +42,19 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">#loginButton{
+    <string notr="true">#LgRgButton{
 background-color: rgb(99, 188, 255);
 color: rgb(255, 255, 255);
 border-radius: 5px;
 font-size:14px;
 }
-#loginButton:hover{
+#LgRgButton:hover{
 background-color: rgb(99, 170, 255);
 color: rgb(255, 255, 255);
 border-radius: 5px;
 
 }
-#loginButton:pressed{
+#LgRgButton:pressed{
 background-color: rgb(99, 188, 255);
 color: rgb(255, 255, 255);
 border-radius: 5px;
@@ -67,13 +67,13 @@ padding-top:2px;
     <string>登录</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="topLabel">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>591</width>
-     <height>111</height>
+     <width>590</width>
+     <height>150</height>
     </rect>
    </property>
    <property name="contextMenuPolicy">
@@ -93,8 +93,8 @@ padding-top:2px;
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>150</y>
+     <x>140</x>
+     <y>160</y>
      <width>261</width>
      <height>131</height>
     </rect>
@@ -109,8 +109,21 @@ padding-top:2px;
     </item>
     <item>
      <widget class="QLineEdit" name="passwordLineEdit">
+      <property name="echoMode">
+       <enum>QLineEdit::Password</enum>
+      </property>
       <property name="placeholderText">
        <string>输入密码</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="passwordLineEdit_2">
+      <property name="echoMode">
+       <enum>QLineEdit::Password</enum>
+      </property>
+      <property name="placeholderText">
+       <string>确认密码</string>
       </property>
      </widget>
     </item>
@@ -163,7 +176,7 @@ padding-top:2px;
        <string>...</string>
       </property>
       <property name="icon">
-       <iconset resource="../../t/FdogInstantMessaging/Fdogpc/libres.qrc">
+       <iconset resource="Resources.qrc">
         <normaloff>:/lib/zuixiaohua.png</normaloff>:/lib/zuixiaohua.png</iconset>
       </property>
       <property name="autoRaise">
@@ -172,7 +185,7 @@ padding-top:2px;
      </widget>
     </item>
     <item>
-     <widget class="QToolButton" name="toolButton_2">
+     <widget class="QToolButton" name="toolButton_x">
       <property name="minimumSize">
        <size>
         <width>25</width>
@@ -189,7 +202,7 @@ padding-top:2px;
        <string>...</string>
       </property>
       <property name="icon">
-       <iconset resource="../../t/FdogInstantMessaging/Fdogpc/libres.qrc">
+       <iconset resource="Resources.qrc">
         <normaloff>:/lib/guanbi.png</normaloff>:/lib/guanbi.png</iconset>
       </property>
       <property name="autoRaise">
@@ -199,10 +212,36 @@ padding-top:2px;
     </item>
    </layout>
   </widget>
+  <widget class="QRadioButton" name="radioButton">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>340</y>
+     <width>141</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QRadioButton::indicator {
+    width:15px;
+    height:15px;
+}
+
+QRadioButton::indicator:checked {background-color:green;}
+QRadioButton::indicator:unchecked {background-color:red;}
+</string>
+   </property>
+   <property name="text">
+    <string>连接服务器中...</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../../t/FdogInstantMessaging/Fdogpc/libres.qrc"/>
+  <include location="Resources.qrc"/>
  </resources>
  <connections/>
 </ui>

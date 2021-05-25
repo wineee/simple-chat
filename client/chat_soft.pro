@@ -54,8 +54,7 @@ FORMS += widget.ui \
     privatechat.ui \
     groupchat.ui
 
-RESOURCES += \
-    Resources.qrc
+RESOURCES +=
 
 DISTFILES += \
     lib/036428b265240e27035db396a284521a.gif \
