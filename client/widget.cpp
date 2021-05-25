@@ -62,7 +62,7 @@ Widget::~Widget()
 void Widget::showwidget()
 {
     if (pchatList != nullptr)
-        pchatList->show();
+        pchatList->activateWindow();
     else
         this->show();
 }

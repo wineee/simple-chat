@@ -48,7 +48,7 @@ void Chatlist::server_reply() {
         }
         if (cmd == "add_friend_reply") {
             QString str = QString("%1把你添加为好友").arg(obj.value("result").toString());
-            QMessageBox::information(this,"添加好友提醒",str);
+            QMessageBox::information(this, "添加好友提醒", str);
             ui->friendList->addItem(obj.value("result").toString());
             break;
         }
@@ -102,30 +102,30 @@ void Chatlist::client_login_reply(QString fri) {
 
 void Chatlist::client_add_friend_reply(QJsonObject & obj){
     if(obj.value("result").toString() == "user_not_exist") {
-        QMessageBox::warning(this,"添加好友提醒","好友不存在");
+        QMessageBox::warning(this, "添加好友提醒", "好友不存在");
     } else if (obj.value("result").toString() == "already_friend") {
-        QMessageBox::warning(this,"添加好友提醒","已经是好友");
+        QMessageBox::warning(this, "添加好友提醒", "已经是好友");
     } else if (obj.value("result").toString() == "success") {
-        QMessageBox::warning(this,"添加好友提醒","好友添加成功");
+        QMessageBox::warning(this, "添加好友提醒", "好友添加成功");
         ui->friendList->addItem(obj.value("friend").toString());
     }
 }
 
 void Chatlist::client_create_group_reply(QJsonObject &obj) {
     if (obj.value("result").toString() == "group_exist") {
-        QMessageBox::warning(this,"创建群提示","群已经存在");
+        QMessageBox::warning(this, "创建群提示", "群已经存在");
     } else if (obj.value("result").toString() == "success") {
         QString str = QString(obj.value("group").toString());
-        QMessageBox::warning(this,"提示",str);
+        QMessageBox::warning(this, "提示", str);
         ui->groupList->addItem(obj.value("group").toString());
     }
 }
 
 void Chatlist::client_add_group_reply(QJsonObject &obj) {
     if (obj.value("result").toString() == "group_not_exist") {
-        QMessageBox::warning(this,"添加群提示","群不存在");
+        QMessageBox::warning(this, "添加群提示", "群不存在");
     } else if (obj.value("result").toString() == "user_in_group") {
-        QMessageBox::warning(this,"添加群提示","已经在群里面");
+        QMessageBox::warning(this, "添加群提示", "已经在群里面");
     } else if (obj.value("result").toString() == "success") {
         ui->groupList->addItem(obj.value("group").toString());
     }

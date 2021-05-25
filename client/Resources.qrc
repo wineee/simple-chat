@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>lib/back.gif</file>
         <file>lib/guanbi.png</file>
         <file>lib/mian.gif</file>
         <file>lib/chat.png</file>
