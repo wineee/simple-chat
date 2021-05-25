@@ -8,6 +8,27 @@ Widget::Widget(QWidget *parent) :
     ui(new Ui::Widget)
 {
     ui->setupUi(this);
+    // 窗体风格
+    this->setWindowFlags(Qt::SplashScreen|Qt::WindowStaysOnTopHint|Qt::FramelessWindowHint);
+    // 窗体透明
+    //setAttribute(Qt::WA_TranslucentBackground);
+
+    // 初始化系统托盘
+    systemtrayicon = new QSystemTrayIcon(this);
+    QIcon icon = QIcon(":/lib/chat.png");
+    systemtrayicon->setIcon(icon);
+
+    menu = new QMenu(this);
+    m_pShowAction = new QAction("打开主界面");
+    m_pCloseAction = new QAction("退出");
+    menu->addAction(m_pShowAction);
+    menu->addSeparator();
+    menu->addAction(m_pCloseAction);
+    connect(m_pShowAction, SIGNAL(triggered(bool)), this, SLOT(showwidget()));
+    connect(m_pCloseAction, SIGNAL(triggered(bool)), this, SLOT(closewidget()));
+    systemtrayicon->setContextMenu(menu);
+    systemtrayicon->show();
+
     socket = new QTcpSocket;
     socket->connectToHost(QHostAddress(IP), 8000); // ip地址和端口号
 
@@ -19,6 +40,40 @@ Widget::~Widget()
 {
     delete ui;
 }
+
+void Widget::showwidget()
+{
+    this->show();
+}
+
+void Widget::closewidget()
+{
+    this->close();
+}
+
+
+// 界面移动
+void Widget::mousePressEvent(QMouseEvent *event) {
+    isPressedWidget = true; // 当前鼠标按下的即是QWidget而非界面上布局的其它控件
+    last = event->globalPos();
+}
+
+void Widget::mouseMoveEvent(QMouseEvent *event) {
+    if (isPressedWidget) {
+        int dx = event->globalX() - last.x();
+        int dy = event->globalY() - last.y();
+        last = event->globalPos();
+        move(x()+dx, y()+dy);
+    }
+}
+
+void Widget::mouseReleaseEvent(QMouseEvent *event) {
+    int dx = event->globalX() - last.x();
+    int dy = event->globalY() - last.y();
+    move(x()+dx, y()+dy);
+    isPressedWidget = false; // 鼠标松开时，置为false
+}
+// 界面移动结束
 
 void Widget::connect_success()
 {
@@ -95,4 +150,14 @@ void Widget::server_reply() {
                              obj.value("friend").toString(),
                              obj.value("group").toString());
     }
+}
+
+void Widget::on_toolButton_m_clicked()
+{
+    this->hide();
+}
+
+void Widget::on_toolButton_2_clicked()
+{
+    this->close();
 }

@@ -7,7 +7,13 @@
 #include <QMessageBox>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QPoint>
+#include <QMouseEvent>
+#include <QMenu>
+#include <QSystemTrayIcon>
+
 #include "chatlist.h"
+#include "trayiconmenu.h"
 
 
 namespace Ui {
@@ -34,6 +40,25 @@ private:
     Ui::Widget *ui;
     QTcpSocket *socket;
     QString userName;
+
+    // 窗口拖动
+    bool isPressedWidget;
+    QPoint last;
+    void mousePressEvent(QMouseEvent *event); // 鼠标点击
+    void mouseMoveEvent(QMouseEvent *event); // 鼠标移动
+    void mouseReleaseEvent(QMouseEvent *event); // 鼠标释放
+
+    // 托盘
+    QSystemTrayIcon *systemtrayicon;
+    QMenu *menu;
+    QAction *m_pShowAction;
+    QAction *m_pCloseAction;
+
+private slots:
+    void showwidget();
+    void closewidget();
+    void on_toolButton_m_clicked();
+    void on_toolButton_2_clicked();
 };
 
 #endif // WIDGET_H

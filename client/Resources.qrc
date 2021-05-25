@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>lib/back.gif</file>
+        <file>lib/background.png</file>
+        <file>lib/close.png</file>
+        <file>lib/delete.png</file>
+        <file>lib/delete2.png</file>
+        <file>lib/guanbi.png</file>
+        <file>lib/jietou.png</file>
+        <file>lib/mian.gif</file>
+        <file>lib/chat.png</file>
+    </qresource>
+</RCC>
