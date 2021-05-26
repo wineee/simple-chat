@@ -190,7 +190,7 @@ void Chatlist::client_send_file_reply(QString res){
 }
 
 void Chatlist::client_send_file_port_reply(QJsonObject obj) {
-    //启动线程，自己封装一个类
+    // 启动线程，自己封装一个类
     SendThread *mySendthread = new SendThread(obj);
     mySendthread->start();
 }
@@ -221,22 +221,22 @@ void Chatlist::on_addGroupButton_clicked() {
 }
 
 void Chatlist::on_frientList_double_clicked() {
-    QString friendName = ui->friendList->currentItem()->text();    //获取对方好友的名字
-    PrivateChat * privateChatWidget = new PrivateChat(socket,userName,friendName,this,&chatWidgetList);   //需要对应该一下构造函数
+    QString friendName = ui->friendList->currentItem()->text();    // 获取对方好友的名字
+    PrivateChat *privateChatWidget = new PrivateChat(socket, userName, friendName, this, &chatWidgetList);
     privateChatWidget->setWindowTitle(friendName);
     privateChatWidget->show();
-    //把窗口添加到列表里卖弄
+
     ChatWidgetInfo c = {privateChatWidget,friendName};
     chatWidgetList.push_back(c);
 }
 
 void Chatlist::on_groupList_double_clicked() {
     QString groupName = ui->groupList->currentItem()->text();
-    GroupChat * groupChatWidget = new GroupChat(socket,groupName,userName,this,&groupWidgetList);
+    GroupChat *groupChatWidget = new GroupChat(socket, groupName, userName, this, &groupWidgetList);
     groupChatWidget->setWindowTitle(groupName);
     groupChatWidget->show();
 
-    groupWidgetInfo g = {groupChatWidget,groupName};
+    groupWidgetInfo g = {groupChatWidget, groupName};
     groupWidgetList.push_back(g);
 }
 

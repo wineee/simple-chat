@@ -75,7 +75,7 @@ void Widget::closewidget()
         exit(0);
 }
 
-// 界面移动
+//~~~~~~~~~~~~~~ 界面移动 ~~~~~~~~~~~~~~~~~~~
 void Widget::mousePressEvent(QMouseEvent *event) {
     isPressedWidget = true; // 当前鼠标按下的即是QWidget而非界面上布局的其它控件
     last = event->globalPos();
@@ -96,11 +96,9 @@ void Widget::mouseReleaseEvent(QMouseEvent *event) {
     move(x()+dx, y()+dy);
     isPressedWidget = false; // 鼠标松开时，置为false
 }
-// 界面移动结束
+//~~~~~~~~~~~~~~~ 界面移动结束 ~~~~~~~~~~~~~~~~
 
-void Widget::connect_success()
-{
-    //QMessageBox::information(this, "连接提示", "连接服务器成功");
+void Widget::connect_success() {
     ui->radioButton->setText(tr("服务器连接成功"));
     ui->radioButton->setChecked(true);
 }
@@ -126,6 +124,7 @@ void Widget::on_toolButton_m_clicked() {
 
 void Widget::on_toolButton_x_clicked() {
     this->close();
+    exit(0);
 }
 
 void Widget::on_changeButton_clicked() {

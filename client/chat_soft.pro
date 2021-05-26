@@ -24,7 +24,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp \
-    trayiconmenu.cpp \
     widget.cpp \
     chatlist.cpp \
     addfriend.cpp \
@@ -43,8 +42,7 @@ HEADERS += widget.h \
     privatechat.h \
     groupchat.h \
     sendthread.h \
-    recvthread.h \
-    trayiconmenu.h
+    recvthread.h
 
 FORMS += widget.ui \
     chatlist.ui \
@@ -58,39 +56,7 @@ RESOURCES += \
     Resources.qrc
 
 DISTFILES += \
-    lib/036428b265240e27035db396a284521a.gif \
-    lib/10001.jpg \
-    lib/back.gif \
-    lib/background.png \
-    lib/close.png \
-    lib/delete.png \
-    lib/delete2.png \
-    lib/dengji.png \
-    lib/fdog.png \
-    lib/fdogicon.png \
+    lib/chat.png \
     lib/guanbi.png \
-    lib/icon2505897252.png \
-    lib/jianpan.png \
-    lib/jietou.png \
-    lib/kaifdog.png \
-    lib/kaisuo.png \
-    lib/likaishijian.png \
-    lib/lixianim.png \
-    lib/mainicon.png \
-    lib/mainicon2.png \
-    lib/manglu.png \
-    lib/max.png \
     lib/mian.gif \
-    lib/min.png \
-    lib/qusefdogicon.png \
-    lib/sangangy.png \
-    lib/search.png \
-    lib/skin.png \
-    lib/suo.png \
-    lib/svip.png \
-    lib/tianjiahaoyou.png \
-    lib/wurao.png \
-    lib/xiaolian.png \
-    lib/yinshenim.png \
-    lib/zaixian.png \
-    lib/zuixiaohua.png
+    lib/zuixiaohua.png \
