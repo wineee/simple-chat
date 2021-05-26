@@ -6,8 +6,9 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QList>
-class Chatlist;//声明互相包含
-#include"chatlist.h"
+
+class Chatlist;
+#include "chatlist.h"
 struct groupWidgetInfo;
 
 namespace Ui {

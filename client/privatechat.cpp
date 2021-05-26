@@ -12,7 +12,6 @@ PrivateChat::PrivateChat(QTcpSocket *s, QString u, QString f, Chatlist *c, QList
     mainWidget = c;
     chatWidgetList = l;
 
-    //ui->fileButton->setVisible(false);
     ui->textEdit->setReadOnly(true);
 
     connect(mainWidget, &Chatlist::signal_to_sub_widget, this, &PrivateChat::show_text_slot);
@@ -71,9 +70,9 @@ void PrivateChat::closeEvent(QCloseEvent *event) {
 
 void PrivateChat::on_fileButton_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "发送文件", QCoreApplication::applicationFilePath());
+    QString fileName = QFileDialog::getOpenFileName(this, tr("发送文件"), QCoreApplication::applicationFilePath());
     if(fileName.isEmpty()) {
-        QMessageBox::warning(this, "发送文件提示", "请选择一个文件");
+        QMessageBox::warning(this, tr("发送文件提示"), tr("未选择文件"));
     } else {
         QFile file(fileName);
         file.open(QIODevice::ReadOnly);

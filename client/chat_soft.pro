@@ -35,6 +35,7 @@ SOURCES += main.cpp \
     recvthread.cpp
 
 HEADERS += widget.h \
+    IP.h \
     chatlist.h \
     addfriend.h \
     creategroup.h \

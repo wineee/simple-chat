@@ -1,7 +1,6 @@
 #include "widget.h"
 #include "ui_widget.h"
 
-#define IP "39.108.144.134"
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
