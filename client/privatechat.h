@@ -7,13 +7,13 @@
 #include <QJsonObject>
 #include <QList>
 #include <QFileDialog>
-#include <QCoreApplication>   //获取这个文件的路径
-#include <QFile>    //操作文件离不开这个
+#include <QCoreApplication>
+#include <QFile>
 #include <QCloseEvent>
 
 class Chatlist;
 struct ChatWidgetInfo;
-#include "chatlist.h"   //互相包含
+#include "chatlist.h"
 
 namespace Ui {
 class PrivateChat;

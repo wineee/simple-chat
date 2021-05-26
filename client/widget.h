@@ -14,8 +14,7 @@
 #include <QMovie>
 
 #include "chatlist.h"
-#include "trayiconmenu.h"
-
+#include "IP.h"
 
 namespace Ui {
 class Widget;

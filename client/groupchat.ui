@@ -89,39 +89,6 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="fileButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>100</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton{ 
-     background-color: rgb(6,157,213); 
-     border: none;
-     border-radius:2px;
-     color:white;
-}
-QPushButton:hover{ 
-     background-color: rgb(75,202,255);
-}</string>
-       </property>
-       <property name="text">
-        <string>传输文件</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -138,7 +105,7 @@ QPushButton:hover{
       <widget class="QPushButton" name="sendButton">
        <property name="minimumSize">
         <size>
-         <width>100</width>
+         <width>200</width>
          <height>30</height>
         </size>
        </property>

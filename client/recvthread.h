@@ -7,11 +7,11 @@
 #include <QHostAddress>
 #include <QFile>
 
-
+#include "IP.h"
 
 class RecvThread : public QThread
 {
-    Q_OBJECT
+    Q_OBJECT  // 用到信号与槽
 public:
     RecvThread(QJsonObject obj);
     void run();   //子线程

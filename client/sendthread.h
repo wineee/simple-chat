@@ -8,6 +8,8 @@
 #include <QThread>
 #include <QFile>
 
+#include "IP.h"
+
 class SendThread : public QThread
 {
 public:

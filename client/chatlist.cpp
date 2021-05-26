@@ -49,7 +49,6 @@ void Chatlist::server_reply() {
     QByteArray ba = socket->readAll();
     QJsonObject obj = QJsonDocument::fromJson(ba).object();
     QString cmd = obj.value("cmd").toString();
-
     do {
         if (cmd == "friend_login") {
            client_login_reply(obj.value("friend").toString());
@@ -125,7 +124,12 @@ void Chatlist::client_add_friend_reply(QJsonObject & obj){
         QMessageBox::warning(this, "添加好友提醒", "已经是好友");
     } else if (obj.value("result").toString() == "success") {
         QMessageBox::warning(this, "添加好友提醒", "好友添加成功");
-        ui->friendList->addItem(obj.value("friend").toString());
+        QListWidgetItem* friItem = new QListWidgetItem;
+        friItem->setText(obj.value("friend").toString());
+        friItem->setFont(QFont(("Arial"), 18, QFont::Normal)); // 设置好友名称的字体
+        friItem->setIcon(QPixmap(":/lib/Avatar.png"));  // 设置头像(假装有)
+        friItem->setSizeHint(QSize(200, 60));  // 设置 QListWidgetItem 大小
+        ui->friendList->addItem(friItem);
     }
 }
 
@@ -177,7 +181,7 @@ void Chatlist::client_chat_reply(QJsonObject &obj) {
     }
     if (flag == 0) { // 聊天窗口没有打开
         QString friendName = obj.value("user_from").toString();
-        PrivateChat *privateChatWidget = new PrivateChat(socket, userName, friendName, this, &chatWidgetList);   //需要对应该一下构造函数
+        PrivateChat *privateChatWidget = new PrivateChat(socket, userName, friendName, this, &chatWidgetList);
         privateChatWidget->setWindowTitle(friendName);
         privateChatWidget->show();
         ChatWidgetInfo c = {privateChatWidget, friendName};
@@ -203,22 +207,21 @@ void Chatlist::client_group_chat_reply(QJsonObject obj) {
         GroupChat *groupChatWidget = new GroupChat(socket, groupName, userName, this, &groupWidgetList);
         groupChatWidget->setWindowTitle(groupName);
         groupChatWidget->show();
-        groupWidgetInfo g = {groupChatWidget,groupName};
+        groupWidgetInfo g = {groupChatWidget, groupName};
         groupWidgetList.push_back(g);
     }
     emit signal_to_sub_widget_group(obj);
 }
 
-void Chatlist::client_send_file_reply(QString res){
-    if (res == "offline"){
+void Chatlist::client_send_file_reply(QString res) {
+    if (res == "offline") {
         QMessageBox::warning(this, "发送文件提醒", "对方不在线");
-    } else if (res == "timeout"){
-        QMessageBox::warning(this, "发送文件提醒", "链接超时");
+    } else if (res == "timeout") {
+        QMessageBox::warning(this, "发送文件提醒", "连接超时");
     }
 }
 
 void Chatlist::client_send_file_port_reply(QJsonObject obj) {
-    // 启动线程，自己封装一个类
     SendThread *mySendthread = new SendThread(obj);
     mySendthread->start();
 }
@@ -230,7 +233,7 @@ void Chatlist::client_recv_file_port_reply(QJsonObject obj) {
 
 void Chatlist::client_friend_offline(QString fri) {
     QString str = QString("%1下线").arg(fri);
-    QMessageBox::information(this,"下线提醒",str);
+    QMessageBox::information(this, "下线提醒", str);
 }
 
 void Chatlist::on_addButton_clicked() {
@@ -254,7 +257,7 @@ void Chatlist::on_frientList_double_clicked() {
     privateChatWidget->setWindowTitle(friendName);
     privateChatWidget->show();
 
-    ChatWidgetInfo c = {privateChatWidget,friendName};
+    ChatWidgetInfo c = {privateChatWidget, friendName};
     chatWidgetList.push_back(c);
 }
 
@@ -276,6 +279,6 @@ void Chatlist::closeEvent(QCloseEvent *event) {
     ba = QJsonDocument(obj).toJson();
     socket->write(ba);
     socket->flush();
-    //刷新socket缓冲区
+    // 刷新socket缓冲区
     event->accept();
 }
