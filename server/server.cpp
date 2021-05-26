@@ -1,5 +1,5 @@
 #include "server.h"
-//g++ *.cpp -o main -std=c++11 -levent -lpthread -lmysqlclient -ljsoncpp
+
 ChatDataBase *Server::chatdb = new ChatDataBase;
 ChatInfo *Server::chatlist = new ChatInfo;
 

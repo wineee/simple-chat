@@ -1,3 +1,5 @@
+# 不能用的话，用 g++ *.cpp -o main -std=c++11 -levent -lpthread -lmysqlclient -ljsoncpp
+
 cmake_minimum_required(VERSION 3.1)
 project(simple-chat)
 
