@@ -19,7 +19,7 @@ Chatlist::Chatlist(QTcpSocket *s, QString fri, QString group, QString u, QWidget
         friItem->setText(friList.at(i));
         friItem->setFont(QFont(("Arial"), 18, QFont::Normal)); // 设置好友名称的字体
         friItem->setIcon(QPixmap(":/lib/Avatar.png"));  // 设置头像(假装有)
-        friItem->setSizeHint(QSize(300, 60));  // 设置 QListWidgetItem 大小
+        friItem->setSizeHint(QSize(200, 60));  // 设置 QListWidgetItem 大小
         ui->friendList->addItem(friItem);
     }
 
@@ -32,7 +32,7 @@ Chatlist::Chatlist(QTcpSocket *s, QString fri, QString group, QString u, QWidget
         groItem->setText(groList.at(i));
         groItem->setFont(QFont(("Arial"), 18, QFont::Normal));
         groItem->setIcon(QPixmap(":/lib/GroupAvatar.png")); // 设置头像(假装有)
-        groItem->setSizeHint(QSize(300, 60));
+        groItem->setSizeHint(QSize(200, 60));
         ui->groupList->addItem(groItem);
     }
 
@@ -62,7 +62,12 @@ void Chatlist::server_reply() {
         if (cmd == "add_friend_reply") {
             QString str = QString("%1把你添加为好友").arg(obj.value("result").toString());
             QMessageBox::information(this, "添加好友提醒", str);
-            ui->friendList->addItem(obj.value("result").toString());
+            QListWidgetItem* friItem = new QListWidgetItem;
+            friItem->setText(obj.value("result").toString());
+            friItem->setFont(QFont(("Arial"), 18, QFont::Normal)); // 设置好友名称的字体
+            friItem->setIcon(QPixmap(":/lib/Avatar.png"));  // 设置头像(假装有)
+            friItem->setSizeHint(QSize(200, 60));  // 设置 QListWidgetItem 大小
+            ui->friendList->addItem(friItem);
             break;
         }
         if (cmd == "create_group_reply") {
@@ -130,7 +135,12 @@ void Chatlist::client_create_group_reply(QJsonObject &obj) {
     } else if (obj.value("result").toString() == "success") {
         QString str = QString(obj.value("group").toString());
         QMessageBox::warning(this, "提示", str);
-        ui->groupList->addItem(obj.value("group").toString());
+        QListWidgetItem* groItem = new QListWidgetItem;
+        groItem->setText(obj.value("group").toString());
+        groItem->setFont(QFont(("Arial"), 18, QFont::Normal));
+        groItem->setIcon(QPixmap(":/lib/GroupAvatar.png")); // 设置头像(假装有)
+        groItem->setSizeHint(QSize(200, 60));
+        ui->groupList->addItem(groItem);
     }
 }
 
@@ -140,7 +150,12 @@ void Chatlist::client_add_group_reply(QJsonObject &obj) {
     } else if (obj.value("result").toString() == "user_in_group") {
         QMessageBox::warning(this, "添加群提示", "已经在群里面");
     } else if (obj.value("result").toString() == "success") {
-        ui->groupList->addItem(obj.value("group").toString());
+        QListWidgetItem* groItem = new QListWidgetItem;
+        groItem->setText(obj.value("group").toString());
+        groItem->setFont(QFont(("Arial"), 18, QFont::Normal));
+        groItem->setIcon(QPixmap(":/lib/GroupAvatar.png")); // 设置头像(假装有)
+        groItem->setSizeHint(QSize(200, 60));
+        ui->groupList->addItem(groItem);
     }
 }
 
@@ -219,17 +234,17 @@ void Chatlist::client_friend_offline(QString fri) {
 }
 
 void Chatlist::on_addButton_clicked() {
-    Addfriend *addFriendWidget = new Addfriend(socket,userName);
+    Addfriend *addFriendWidget = new Addfriend(socket, userName);
     addFriendWidget->show();
 }
 
 void Chatlist::on_createGroupButton_clicked() {
-    CreateGroup *createGroupWidget = new CreateGroup(socket,userName);
+    CreateGroup *createGroupWidget = new CreateGroup(socket, userName);
     createGroupWidget->show();
 }
 
 void Chatlist::on_addGroupButton_clicked() {
-    AddGroup * addGroupWidget =new AddGroup(socket,userName);
+    AddGroup * addGroupWidget =new AddGroup(socket, userName);
     addGroupWidget->show();
 }
 
