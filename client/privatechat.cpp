@@ -24,7 +24,7 @@ PrivateChat::~PrivateChat()
 }
 
 void PrivateChat::on_sendButton_clicked() {
-    QString text = ui->lineEdit->text();
+    QString text = ui->inputEdit->toPlainText();
     QJsonObject obj;
     obj.insert("cmd", "private_chat");
     obj.insert("user_from", userName);
@@ -33,7 +33,7 @@ void PrivateChat::on_sendButton_clicked() {
     QByteArray ba = QJsonDocument(obj).toJson();
     socket->write(ba);
 
-    ui->lineEdit->clear();
+    ui->inputEdit->clear();
 
     QString time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
     ui->textEdit->setTextColor(Qt::blue);
@@ -61,12 +61,12 @@ void PrivateChat::show_text_slot(QJsonObject obj) {
 
 void PrivateChat::closeEvent(QCloseEvent *event) {
     for (int i = 0; i < chatWidgetList->size(); i++) {
-        if (chatWidgetList->at(i).name==friendName) {
+        if (chatWidgetList->at(i).name == friendName) {
             chatWidgetList->removeAt(i);
             break;
         }
     }
-    event->accept();//确实关闭窗口
+    event->accept(); // 确实关闭窗口
 }
 
 void PrivateChat::on_fileButton_clicked()
@@ -87,8 +87,3 @@ void PrivateChat::on_fileButton_clicked()
         socket->write(ba);
     }
 }
-
-
-
-
-
