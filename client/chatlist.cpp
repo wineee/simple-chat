@@ -10,17 +10,30 @@ Chatlist::Chatlist(QTcpSocket *s, QString fri, QString group, QString u, QWidget
     userName = u;
     connect(socket, &QTcpSocket::readyRead, this, &Chatlist::server_reply);
 
-    // 初始化好友列表和群列表
+    // 初始化好友列表
+    ui->friendList->setIconSize(QSize(50, 50)); // 头像大小
     QStringList friList = fri.split('|'); // 根据|去解析
     for (int i = 0; i < friList.size(); i++) {
-        if (friList.at(i) != "")
-            ui->friendList->addItem(friList.at(i));
+        if (friList.at(i).size() == 0) continue;
+        QListWidgetItem* friItem = new QListWidgetItem;
+        friItem->setText(friList.at(i));
+        friItem->setFont(QFont(("Arial"), 18, QFont::Normal)); // 设置好友名称的字体
+        friItem->setIcon(QPixmap(":/lib/Avatar.png"));  // 设置头像(假装有)
+        friItem->setSizeHint(QSize(300, 60));  // 设置 QListWidgetItem 大小
+        ui->friendList->addItem(friItem);
     }
 
+    // 初始化群列表
+    ui->groupList->setIconSize(QSize(50, 50));
     QStringList groList = group.split('|');
     for (int i = 0; i < groList.size(); i++) {
-        if (groList.at(i) != "")
-            ui->groupList->addItem(groList.at(i));
+        if (groList.at(i).size() == 0) continue;
+        QListWidgetItem* groItem = new QListWidgetItem;
+        groItem->setText(groList.at(i));
+        groItem->setFont(QFont(("Arial"), 18, QFont::Normal));
+        groItem->setIcon(QPixmap(":/lib/GroupAvatar.png")); // 设置头像(假装有)
+        groItem->setSizeHint(QSize(300, 60));
+        ui->groupList->addItem(groItem);
     }
 
     connect(ui->friendList, &QListWidget::itemDoubleClicked, this, &Chatlist::on_frientList_double_clicked);

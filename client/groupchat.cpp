@@ -33,14 +33,17 @@ void GroupChat::show_group_member(QJsonObject obj) {
             // 得到的是带有|的字符串
             QStringList strList = obj.value("member").toString().split("|");
             for (int i = 0; i < strList.size(); i++) {
-                ui->listWidget->addItem(strList.at(i));
+                if (strList.at(i).size() == 0) continue;
+                QTableWidgetItem *pusr = new QTableWidgetItem(strList.at(i));
+                ui->tableWidget->insertRow(0);
+                ui->tableWidget->setItem(0, 0, pusr);
             }
         }
     }
 }
 
 void GroupChat::on_sendButton_clicked() {
-    QString text = ui->lineEdit->text();
+    QString text = ui->inputEdit->toPlainText();
     QJsonObject obj;
     obj.insert("cmd", "group_chat");
     obj.insert("user", userName);
@@ -50,11 +53,13 @@ void GroupChat::on_sendButton_clicked() {
     QByteArray ba = QJsonDocument(obj).toJson();
     socket->write(ba);
 
-    ui->lineEdit->clear();
-    ui->textEdit->append(userName+":");
-    ui->textEdit->append("\n");
+    ui->inputEdit->clear();
+
+    QString time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    ui->textEdit->setTextColor(Qt::blue);
+    ui->textEdit->append("[" + userName + "] at " + time);
+    ui->textEdit->setTextColor(Qt::black);
     ui->textEdit->append(text);
-    ui->textEdit->append("\n");
 }
 
 void GroupChat::show_group_text(QJsonObject obj) {
@@ -65,10 +70,12 @@ void GroupChat::show_group_text(QJsonObject obj) {
                 this->showNormal();
             }
             this->activateWindow();
-            ui->textEdit->append(obj.value("user").toString()+":");
-            ui->textEdit->append("\n");
+
+            QString time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+            ui->textEdit->setTextColor(Qt::blue);
+            ui->textEdit->append("[" + obj.value("user").toString() + "] at " + time);
+            ui->textEdit->setTextColor(Qt::black);
             ui->textEdit->append(obj.value("text").toString());
-            ui->textEdit->append("\n");
         }
     }
 }

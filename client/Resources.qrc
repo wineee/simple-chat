@@ -4,5 +4,7 @@
         <file>lib/mian.gif</file>
         <file>lib/chat.png</file>
         <file>lib/zuixiaohua.png</file>
+        <file>lib/Avatar.png</file>
+        <file>lib/GroupAvatar.png</file>
     </qresource>
 </RCC>

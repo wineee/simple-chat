@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>303</width>
-    <height>579</height>
+    <width>300</width>
+    <height>643</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,28 +16,45 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="minimumSize">
       <size>
-       <width>271</width>
-       <height>501</height>
+       <width>300</width>
+       <height>500</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>271</width>
-       <height>501</height>
+       <width>5000</width>
+       <height>2333333</height>
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">QTabBar::tab{Width :135}</string>
+      <string notr="true">QTabWidget::tab-bar { alignment: center; }
+QTabBar::tab {height: 28px; width:130px ;color:rgb(0, 170, 255);}
+</string>
+     </property>
+     <property name="tabPosition">
+      <enum>QTabWidget::North</enum>
+     </property>
+     <property name="tabShape">
+      <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="elideMode">
+      <enum>Qt::ElideNone</enum>
+     </property>
      <widget class="QWidget" name="tab">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <attribute name="title">
        <string>好友</string>
       </attribute>
@@ -47,6 +64,17 @@
        </item>
        <item>
         <widget class="QPushButton" name="addButton">
+         <property name="styleSheet">
+          <string notr="true">QPushButton{ 
+     background-color: rgb(6,157,213); 
+     border: none;
+     border-radius:2px;
+     color:white;
+}
+QPushButton:hover{ 
+     background-color: rgb(75,202,255);
+}</string>
+         </property>
          <property name="text">
           <string>添加好友</string>
          </property>
@@ -55,6 +83,12 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <attribute name="title">
        <string>群聊</string>
       </attribute>
@@ -64,6 +98,17 @@
        </item>
        <item>
         <widget class="QPushButton" name="addGroupButton">
+         <property name="styleSheet">
+          <string notr="true">QPushButton{ 
+     background-color: rgb(6,157,213); 
+     border: none;
+     border-radius:2px;
+     color:white;
+}
+QPushButton:hover{ 
+     background-color: rgb(75,202,255);
+}</string>
+         </property>
          <property name="text">
           <string>添加群</string>
          </property>
@@ -71,6 +116,17 @@
        </item>
        <item>
         <widget class="QPushButton" name="createGroupButton">
+         <property name="styleSheet">
+          <string notr="true">QPushButton{ 
+     background-color: rgb(6,157,213); 
+     border: none;
+     border-radius:2px;
+     color:white;
+}
+QPushButton:hover{ 
+     background-color: rgb(75,202,255);
+}</string>
+         </property>
          <property name="text">
           <string>创建群聊</string>
          </property>

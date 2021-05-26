@@ -13,6 +13,12 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">#PrivateChat{
+  border-radius:3px;
+  background:#E7EAF7;
+}</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTextEdit" name="textEdit">
@@ -53,6 +59,23 @@
        <property name="enabled">
         <bool>true</bool>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton{ 
+     background-color: rgb(6,157,213); 
+     border: none;
+     border-radius:2px;
+     color:white;
+}
+QPushButton:hover{ 
+     background-color: rgb(75,202,255);
+}</string>
+       </property>
        <property name="text">
         <string>传输文件</string>
        </property>
@@ -73,6 +96,23 @@
      </item>
      <item>
       <widget class="QPushButton" name="sendButton">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>30</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton{ 
+     background-color: rgb(6,157,213); 
+     border: none;
+     border-radius:2px;
+     color:white;
+}
+QPushButton:hover{ 
+     background-color: rgb(75,202,255);
+}</string>
+       </property>
        <property name="text">
         <string>发送</string>
        </property>
