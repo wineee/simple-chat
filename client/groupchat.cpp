@@ -58,7 +58,7 @@ void GroupChat::on_sendButton_clicked() {
 }
 
 void GroupChat::show_group_text(QJsonObject obj) {
-    //有可能同时打开多个群聊窗口，收到但是不用都显示
+    // 有可能同时打开多个群聊窗口，收到但是不用都显示
     if (obj.value("cmd").toString() == "group_chat_reply") {
         if (obj.value("group").toString() == groupName) {
             if (this->isMinimized()) {

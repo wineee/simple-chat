@@ -13,6 +13,7 @@ PrivateChat::PrivateChat(QTcpSocket *s, QString u, QString f, Chatlist *c, QList
     chatWidgetList = l;
 
     ui->fileButton->setVisible(false);
+    ui->textEdit->setReadOnly(true);
 
     connect(mainWidget, &Chatlist::signal_to_sub_widget, this, &PrivateChat::show_text_slot);
 }
@@ -33,10 +34,12 @@ void PrivateChat::on_sendButton_clicked() {
     socket->write(ba);
 
     ui->lineEdit->clear();
-    ui->textEdit->append(userName+":");
-    ui->textEdit->append("\n");
+
+    QString time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    ui->textEdit->setTextColor(Qt::blue);
+    ui->textEdit->append("[" + userName  + "] at " + time);
+    ui->textEdit->setTextColor(Qt::black);
     ui->textEdit->append(text);
-    ui->textEdit->append("\n");
 }
 
 void PrivateChat::show_text_slot(QJsonObject obj) {
@@ -47,10 +50,11 @@ void PrivateChat::show_text_slot(QJsonObject obj) {
             }
             this->activateWindow(); // 显示在最上面
 
-            ui->textEdit->append(friendName+":");
-            ui->textEdit->append("\n");
+            QString time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+            ui->textEdit->setTextColor(Qt::blue);
+            ui->textEdit->append("[" + friendName  + "] at " + time);
+            ui->textEdit->setTextColor(Qt::black);
             ui->textEdit->append(obj.value("text").toString());
-            ui->textEdit->append("\n");
         }
     }
 }
@@ -69,7 +73,7 @@ void PrivateChat::on_fileButton_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this, "发送文件", QCoreApplication::applicationFilePath());
     if(fileName.isEmpty()) {
-        QMessageBox::warning(this,"发送文件提示","请选择一个文件");
+        QMessageBox::warning(this, "发送文件提示", "请选择一个文件");
     } else {
         QFile file(fileName);
         file.open(QIODevice::ReadOnly);
