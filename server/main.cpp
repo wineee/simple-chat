@@ -5,6 +5,5 @@ using namespace std;
 
 int main() {
   Server s;
-  
   return 0;
 }

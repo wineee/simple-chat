@@ -481,7 +481,6 @@ void Server::server_user_offline(struct bufferevent *bev, Json::Value val) {
     cout << start << " " << end << " " << fri << " hhh\n"; 
     struct bufferevent *to_bev = chatlist->info_get_friend_bev(fri);
     if (to_bev != nullptr) {
-      //cout << b;
       if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
 	      cout << "bufferevent write error" << endl;
       }
@@ -493,10 +492,10 @@ void Server::server_user_offline(struct bufferevent *bev, Json::Value val) {
 
 // 文件传输
 /*
-   客户端发送 {"cmd":"send_file", "from_user":"", "to_user":"", "length":""}
+   客户端发送 {"cmd":"send_file", "from_user":"", "to_user":"","filename":"a.txt","length":""}
    如果对方不在线 {"cmd":"send_file_relpy","result":"offline"}
-   发送 {"cmd":"send_file_port_reply","port":"8080"}
-   接受 {"cmd":"revc_file_port_reply","port":"8080"}
+   发送 {"cmd":"send_file_port_reply","port":"8080","filename":"a.txt","length":"100"}
+   接受 {"cmd":"recv_file_port_reply","port":"8080","filename":"a.txt","length":"100"}
    超时{"cmd":"send_file_reply","result":"timeout"}
 */
 void Server::server_send_file(struct bufferevent *bev, Json::Value val) {
@@ -509,27 +508,30 @@ void Server::server_send_file(struct bufferevent *bev, Json::Value val) {
     returnVal["result"] = "offline";
     b = Json::writeString(wbuilder, returnVal);
     if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
-	cout << "bufferevent write error" << endl;
+	    cout << "bufferevent write error" << endl;
     }
+    return;
   }
+
   // 启动新线程，创建文件服务器
   int port = 8080, from_fd = 0, to_fd = 0;
   thread send_file_thread(send_file_hander, val["length"].asInt(), port, &from_fd, &to_fd);
   send_file_thread.detach();
-  //;; 返回 port -> bev
+
+  // 返回 port 给发送端
+  returnVal.clear();
   returnVal["cmd"] = "send_file_port_reply";
-  returnVal["port"] = "8080";
-  returnVal["filename"]=val["filename"];
+  returnVal["port"] = port;
+  returnVal["filename"] = val["filename"];
   returnVal["length"] = val["length"];
   b = Json::writeString(wbuilder, returnVal);
  // if (bufferevent_write(bev, b.c_str(), b.size()) < 0)
-  if(send(to_bev->ev_read.ev_fd,b.c_str(),strlen(b.c_str()),0)<0) 
-  {
+  if (send(bev->ev_read.ev_fd, b.c_str(), b.size(), 0) < 0) {
     cout << "bufferevent write error" << endl;
+    return;
   }
-  //
   int count = 0;
-  while(from_fd <= 0) {
+  while (from_fd <= 0) {
     count++;
     usleep(100000);
     if (count == 100) {
@@ -544,20 +546,19 @@ void Server::server_send_file(struct bufferevent *bev, Json::Value val) {
       return;
     }
   }
+  cout << "part1 ok\n";
 
-  // 返回端口号给接收客户端
+  // 返回端口号给接收端
   returnVal.clear();
-  returnVal["cmd"] = "revc_file_port_reply";
-  returnVal["port"] = "8080";
+  returnVal["cmd"] = "recv_file_port_reply";
+  returnVal["port"] = port;
   returnVal["filename"]=val["filename"];
   returnVal["length"] = val["length"];
   b = Json::writeString(wbuilder, returnVal);
  // if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
- if(send(to_bev->ev_read.ev_fd,b.c_str(),strlen(b.c_str()),0)<0) 
- { 
-  cout << "bufferevent write error" << endl;
+  if(send(to_bev->ev_read.ev_fd, b.c_str(), b.size(), 0) < 0) { 
+    cout << "bufferevent write error" << endl;
   }
-
   count = 0;
   while(to_fd <= 0) {
     count++;
@@ -569,42 +570,74 @@ void Server::server_send_file(struct bufferevent *bev, Json::Value val) {
       returnVal["result"] = "timeout";
       b = Json::writeString(wbuilder, returnVal);
       if (bufferevent_write(bev, b.c_str(), b.size()) < 0) {
-	cout << "bufferevent write error" << endl;
+	      cout << "bufferevent write error" << endl;
       }
       if (bufferevent_write(to_bev, b.c_str(), b.size()) < 0) {
-	cout << "bufferevent write error" << endl;
+	      cout << "bufferevent write error" << endl;
       }
       return;
     }
   }
+  cout << "part2 ok\n";
 }
 
 void Server::send_file_hander(size_t length, int port, int *f_fd, int *t_fd) {
+  cout << "~~~~~~~~~~in send_file_hander~~~~~~~~~~~\n";
+  const int MAXSIZE = 1024 * 1024;
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd == -1) {
+    cout << "create sockfd failure!\n";
     return;
   }
-  int opt = 1;
-  setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(opt));
 
-  struct sockaddr_in server_addr, client_addr;
+  // sockfd为需要端口复用的套接字
+  int opt = 1;
+  setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (const void *)&opt, sizeof(opt));
+
+  // 接受缓冲区
+  int nRecvBuf = MAXSIZE;
+  setsockopt(sockfd, SOL_SOCKET, SO_RCVBUF, (const char *)&nRecvBuf, sizeof(int));
+  // 发送缓冲区
+  int nSendBuf = MAXSIZE;
+  setsockopt(sockfd, SOL_SOCKET, SO_SNDBUF, (const char *)&nRecvBuf, sizeof(int));
+  
+  std::cout << "sockfd is: " << sockfd << std::endl;
+  struct sockaddr_in server_addr;
   memset(&server_addr, 0, sizeof(server_addr));
   server_addr.sin_family = AF_INET;
-  server_addr.sin_port = htons(port);
-  server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-  bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
-
-  int len = sizeof(client_addr);
+  server_addr.sin_port = htons(8080);
+  server_addr.sin_addr.s_addr = inet_addr(IP);
+  bzero(&(server_addr.sin_zero), 8);
+  while (bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1); 
+  cout << "bind success\n";
+  
+  //进入监听状态，等待用户发起请求
+  listen(sockfd, 10);
+  
+  struct sockaddr_in client_addr;
+  socklen_t len = sizeof(client_addr);
   // 接受发送客户端的连接请求
-  *f_fd = accept(sockfd, (struct sockaddr *)&client_addr, (socklen_t *)&len);
-  // 接受接收客户端的连接请求
-  *t_fd = accept(sockfd, (struct sockaddr *)&client_addr, (socklen_t *)&len);
+  while (*f_fd <= 0) {
+    *f_fd = accept(sockfd, (struct sockaddr *)&client_addr, &len);
+    //cout << " fromfd:" << *f_fd << "\n";
+  }
+  cout << "accept fromfd:" << *f_fd << "\n";
 
-  char buf[4096] = {0};
+  // 接受接收客户端的连接请求
+  while (*t_fd <= 0) {
+    *t_fd = accept(sockfd, (struct sockaddr *)&client_addr, &len);
+     // cout << "tofd:" << *t_fd << "\n";
+  }
+  cout << "accept tofd:" << *t_fd << "\n";
+
+  char buf[MAXSIZE] = {0};
   size_t size, sum = 0;
 
   while(true) {
-    size = recv(*f_fd, buf, 4096, 0);
+    size = recv(*f_fd, buf, MAXSIZE, 0);
+    if (size <= 0 || size > MAXSIZE) {
+      break;
+    }
     sum += size;
     send(*t_fd, buf, size, 0);
     if (sum >= length) {
@@ -612,6 +645,7 @@ void Server::send_file_hander(size_t length, int port, int *f_fd, int *t_fd) {
     }
     memset(buf, 0, sizeof(buf));
   }
+  cout << "send file end!\n";
   close(*f_fd);
   close(*t_fd);
   close(sockfd);
