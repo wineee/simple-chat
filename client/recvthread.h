@@ -14,7 +14,7 @@ class RecvThread : public QThread
     Q_OBJECT  // 用到信号与槽
 public:
     RecvThread(QJsonObject obj);
-    void run();   //子线程
+    void run();   // 子线程
 
 private slots:
     void recv_file();   //父线程

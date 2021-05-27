@@ -11,9 +11,9 @@ RecvThread::RecvThread(QJsonObject obj) {
 }
 
 void RecvThread::run() {
-    file = new QFile(fileName);
+    file = new QFile("recv_" + fileName);
     file->open(QIODevice::WriteOnly);
-    recvSocket = new QTcpSocket; // 在子线程里面初始化
+    recvSocket = new QTcpSocket;
     connect(recvSocket, &QTcpSocket::readyRead, this, &RecvThread::recv_file, Qt::DirectConnection);
     // Qt::DirectConnection 参考 https://www.bbsmax.com/A/kjdw1OpAJN/
     recvSocket->connectToHost(QHostAddress(IP), port);
@@ -26,7 +26,6 @@ void RecvThread::run() {
 }
 
 void RecvThread::recv_file() {
-
     QByteArray ba = recvSocket->readAll();
     total += ba.size();
     file->write(ba);
@@ -34,8 +33,8 @@ void RecvThread::recv_file() {
     if (total >= fileLength) {
         file->close();
         recvSocket->close();
-        delete file;
-        delete recvSocket;
+        //delete file;
+        //delete recvSocket;
         this->quit();
     }
 }

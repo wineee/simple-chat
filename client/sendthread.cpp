@@ -10,13 +10,14 @@ SendThread::SendThread(QJsonObject obj) {
 void SendThread::run() {
     QTcpSocket sendSocket;
     sendSocket.connectToHost(QHostAddress(IP), port);
+
     if(!sendSocket.waitForConnected(10000)) {   // 超过10秒
         this->quit();   // 退出线程
     } else {
         QFile file(fileName); // fielNAme是个路径
         file.open(QIODevice::ReadOnly);
         while(true) {
-              QByteArray  ba = file.read(1024 * 1024);
+              QByteArray ba = file.read(1024 * 1024);
               if (ba.size() == 0)
                   break;
               sendSocket.write(ba);
