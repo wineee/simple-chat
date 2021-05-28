@@ -44,3 +44,5 @@ apt-get install mysql-server mysql-client libmysqlclient-dev
 ---
 
 参考教程：https://www.bilibili.com/video/BV19U4y1p7pT
+
+### [放上一点可供参考的笔记](https://github.com/wineee/simple-chat/blob/main/libevent.md)
