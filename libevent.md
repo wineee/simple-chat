@@ -5,12 +5,12 @@
 **libevent简介**
 
 Libevent是基于 Reactor 模式的网络库，有几个显著的亮点：
-=> 事件驱动（event-driven），高性能;
-=> 轻量级，专注于网络；
-=> 跨平台，支持Windows、Linux、*BSD和Mac Os；
-=> 支持多种I/O多路复用技术， epoll、poll、dev/poll、select和kqueue等；
-=> 支持I/O，定时器和信号等事件；
-=> 注册事件优先级
+- 事件驱动（event-driven），高性能;
+- 轻量级，专注于网络；
+- 跨平台，支持Windows、Linux、*BSD和Mac Os；
+- 支持多种I/O多路复用技术， epoll、poll、dev/poll、select和kqueue等；
+- 支持I/O，定时器和信号等事件；
+- 注册事件优先级
 
 ----
 
@@ -61,7 +61,9 @@ epoll功能是由epoll_create、epoll_ctl和epoll_wait这三个系统调用构�
 
 先通过epoll_create系统调用创建监视描述符，该描述符用于代表要监视的文件描述符,然后通过epoll_ctl将监视描述符进行注册，再通过epoll_wait进行实际的监视
 
-和select系统调用相比，epoll的优点如下：❑ 要监视的fd数量没有限制❑ 只返回产生事件的fd的信息，因此无需遍历所有的fd，性能能够得到改善。
+和select系统调用相比，epoll的优点如下：
+- 要监视的fd数量没有限制
+- 只返回产生事件的fd的信息，因此无需遍历所有的fd，性能能够得到改善。
 
 ---
 
