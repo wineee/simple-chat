@@ -34,6 +34,8 @@
 
 > 使用阿里云  Ubuntu 20.04.2 系统
 
+需要安装 libevent jsoncpp mysql
+
 ```bash
 apt-get install libevent-dev libjsoncpp-dev
 apt-get install mysql-server mysql-client libmysqlclient-dev 
