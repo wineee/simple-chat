@@ -12,8 +12,6 @@ PrivateChat::PrivateChat(QTcpSocket *s, QString u, QString f, Chatlist *c, QList
     mainWidget = c;
     chatWidgetList = l;
 
-    ui->textEdit->setReadOnly(true);
-
     connect(mainWidget, &Chatlist::signal_to_sub_widget, this, &PrivateChat::show_text_slot);
 }
 
