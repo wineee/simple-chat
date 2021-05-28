@@ -54,6 +54,8 @@ private slots:
     void on_frientList_double_clicked();
     void on_groupList_double_clicked();
 
+    void recv_file_success_noitce(QString fileName);
+
 signals:
     void signal_to_sub_widget(QJsonObject);
     void signal_to_sub_widget_member(QJsonObject);

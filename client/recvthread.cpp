@@ -35,6 +35,7 @@ void RecvThread::recv_file() {
         recvSocket->close();
         //delete file;
         //delete recvSocket;
+        emit recv_file_success_signals(fileName);
         this->quit();
     }
 }

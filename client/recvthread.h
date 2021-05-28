@@ -1,5 +1,6 @@
 #ifndef RECVTHREAD_H
 #define RECVTHREAD_H
+
 #include <QThread>
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -14,10 +15,10 @@ class RecvThread : public QThread
     Q_OBJECT  // 用到信号与槽
 public:
     RecvThread(QJsonObject obj);
-    void run();   // 子线程
+    void run();
 
 private slots:
-    void recv_file();   //父线程
+    void recv_file();
 
 private:
     QString fileName;
@@ -26,6 +27,9 @@ private:
     int port;
     QTcpSocket *recvSocket;
     QFile *file;
+
+signals:
+    void recv_file_success_signals(QString fileName);
 };
 
 #endif // RECVTHREAD_H

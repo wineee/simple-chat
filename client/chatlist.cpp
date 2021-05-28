@@ -114,7 +114,7 @@ void Chatlist::server_reply() {
 
 void Chatlist::client_login_reply(QString fri) {
     QString str = QString("%1好友上线").arg(fri);
-    QMessageBox::information(this,"好友上线提醒",str);
+    QMessageBox::information(this, "好友上线提醒", str);
 }
 
 void Chatlist::client_add_friend_reply(QJsonObject & obj){
@@ -228,7 +228,12 @@ void Chatlist::client_send_file_port_reply(QJsonObject obj) {
 
 void Chatlist::client_recv_file_port_reply(QJsonObject obj) {
     RecvThread *myRecvThread = new RecvThread(obj);
+    connect(myRecvThread, &RecvThread::recv_file_success_signals, this, &Chatlist::recv_file_success_noitce);
     myRecvThread->start();
+}
+
+void Chatlist::recv_file_success_noitce(QString fileName) {
+    QMessageBox::information(this, "文件传输", fileName + " 接收成功!");
 }
 
 void Chatlist::client_friend_offline(QString fri) {
